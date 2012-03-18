@@ -98,7 +98,7 @@ package body MinMax is
                   state.bestVal := -1;
                   state.best := new GameTree_Type'(move);
                   return;
-               elsif(move.bestVal > NodeList.Element(node).bestVal) then
+               elsif(move.bestVal < NodeList.Element(node).bestVal) then
                   state.bestVal := move.bestVal;
                   state.best := new GameTree_Type'(move);
                end if;
