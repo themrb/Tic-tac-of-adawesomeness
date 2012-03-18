@@ -1,10 +1,10 @@
+with GameTree; use GameTree;
 with Boards; use Boards;
 
 package MinMax is
 
-   type BoardValue is new Integer range -1..1;
-   function Min (current : in State) return BoardValue;
-   function Max (current : in State) return BoardValue;
-   function Eval(current : in State) return BoardValue;
+   function Min (state : in GameTree_Type) return BoardValue;
+   procedure Max (state : in out GameTree_Type);
+   function Terminal(state : in State_Type) return Boolean;
 
 end MinMax;

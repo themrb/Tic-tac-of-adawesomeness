@@ -1,24 +1,28 @@
-with Ada.Containers.Doubly_Linked_Lists;
-
 package Boards is
 
-   type Dim is new Positive range 1..4;
-   type Position is (X, O, Empty);
-   type Turn is (X, O);
-   type Board is array(Dim, Dim, Dim) of Position;
-   pragma Pack (Board);
+   type BoardValue is new Integer range -1..1;
+   type Dimension is new Natural range 0..3;
 
-   type State is record
-      go: Turn := X;
-      turns : Natural range 0 .. 64 := 0;
-      current_state : Board;
+   type Cell is (X, O, Empty);
+
+   type Board_Type is array(Dimension, Dimension, Dimension) of Cell;
+   pragma Pack (Board_Type);
+
+   type Coordinate is (x, y, z);
+
+   type Place is array(Coordinate) of Dimension;
+
+   type State_Type is record
+      justWent : Cell;
+      spot : Place;
+      turns : Natural range 0 .. 64;
+      current_state : Board_Type;
    end record;
 
-   package BoardList is new Ada.Containers.Doubly_Linked_Lists(Board);
-   use BoardList;
+   Empty_Board : constant State_Type := (Empty, (1,1,1), 0, (others => (others => (others => Empty))));
 
-   function Symmetric(stateA, stateB : in State) return Boolean;
+   function Symmetric(stateA, stateB : in State_Type) return Boolean;
 
-   function Expand(current : in Board) return BoardList.List;
+   function NextPlayer(prev : Cell) return Cell;
 
 end Boards;
