@@ -4,7 +4,7 @@ with Boards; use Boards;
 package body MinMax is
 
    function Terminal(state : in State_Type) return Boolean is
-      xrow, yrow, zrow, xdiag, ydiag, zdiag : Boolean := True;
+      xrow, yrow, zrow, xdiag, ydiag, zdiag, corner : Boolean := True;
    begin
       for i in Dimension'Range loop
          xrow := xrow and state.current_state(i,state.spot(y), state.spot(z)) = state.justWent;
@@ -14,6 +14,8 @@ package body MinMax is
       if (xrow or yrow or zrow) then
          return True;
       end if;
+
+      -- The following 3 blocks check for diagonals in each of the planes.
 
       if state.spot(x) = state.spot(y) then
          for i in Dimension'Range loop
@@ -27,6 +29,8 @@ package body MinMax is
          zdiag := False;
       end if;
 
+      if(zdiag) then return True; end if;
+
       if state.spot(y) = state.spot(z) then
          for i in Dimension'Range loop
             xdiag := xdiag and state.current_state(state.spot(x),i,i) = state.justWent;
@@ -38,6 +42,8 @@ package body MinMax is
       else
          xdiag := False;
       end if;
+
+      if(xdiag) then return True; end if;
 
       if state.spot(x) = state.spot(z) then
          for i in Dimension'Range loop
@@ -51,15 +57,29 @@ package body MinMax is
          ydiag := False;
       end if;
 
-      --diagonal in plane
-      --crosscorner diagonals
-      --vertical diagonals
+      if(ydiag) then return True; end if;
 
-      if(xdiag or ydiag or zdiag) then
-         return True;
+      --crosscorner diagonals
+
+      if(state.spot(x) = state.spot(y) and state.spot(x) = state.spot(z)) then
+         for i in Dimension'Range loop
+            corner := corner and state.current_state(i,i,i) = state.justWent;
+         end loop;
+      elsif(state.spot(x) = (3-state.spot(y)) and state.spot(x) = state.spot(z)) then
+         for i in Dimension'Range loop
+            corner := corner and state.current_state(i,3-i,i) = state.justWent;
+         end loop;
+      elsif(state.spot(x) = state.spot(y) and state.spot(x) = (3-state.spot(z))) then
+         for i in Dimension'Range loop
+            corner := corner and state.current_state(i,i,3-i) = state.justWent;
+         end loop;
+      else
+         for i in Dimension'Range loop
+            corner := corner and state.current_state(3-i,i,i) = state.justWent;
+         end loop;
       end if;
 
-      return False;
+      return corner;
 
    end Terminal;
 
