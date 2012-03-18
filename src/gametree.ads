@@ -4,7 +4,7 @@ with Ada.Containers.Doubly_Linked_Lists;
 package GameTree is
 
    type GameTree_Type;
-   type GameTree_Access is access GameTree_Type;
+   type GameTree_Access is access all GameTree_Type;
 
    type Level_Type is new Natural range 0..64;
    type Children_Type is array(Level_Type range <>) of GameTree_Access;
@@ -19,6 +19,7 @@ package GameTree is
 
    package NodeList is new Ada.Containers.Doubly_Linked_Lists(GameTree_Type);
    use NodeList;
-   function Expand(State : in GameTree_Type) return NodeList.List;
+
+   function Expand(state : in GameTree_Type) return NodeList.List;
 
 end GameTree;
