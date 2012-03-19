@@ -25,4 +25,6 @@ package Boards is
 
    function NextPlayer(prev : Cell) return Cell;
 
+   function AdvanceMove(state : State_Type; move : Place) return State_Type;
+
 end Boards;
