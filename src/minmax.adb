@@ -2,9 +2,9 @@ with GameTree; use GameTree;
 with Boards; use Boards;
 with Ada.Text_IO; use Ada.Text_IO;
 
+with Ada.Containers; use Ada.Containers;
+
 package body MinMax is
-
-
 
    procedure Min (state : in out GameTree_Type) is
       successors : NodeList.List := Expand(state);
@@ -13,6 +13,9 @@ package body MinMax is
       declare
          node : NodeList.Cursor := NodeList.First(successors);
       begin
+         --Put_Line("This happened (Min)");
+         Put_Line("Min" & Image(state.state));
+
          -- Check if any of the successors are terminal states.
          -- Mainly to avoid exploring large portions of the game tree if the
          -- next move is already fixed.
@@ -58,6 +61,9 @@ package body MinMax is
       declare
          node : NodeList.Cursor := NodeList.First(successors);
       begin
+         --Put_Line("This happened (Max)");
+         Put_Line("Max" & Image(state.state));
+
          -- Check if any of the successors are terminal states.
          -- Mainly to avoid exploring large portions of the game tree if the
          -- next move is already fixed.
@@ -75,7 +81,7 @@ package body MinMax is
          end loop;
 
          node := NodeList.First(successors);
-
+--           Put_Line(Count_Type'Image(NodeList.Length(successors)));
          -- Didn't find any terminal states above, so we continue MinMax-ing
          for i in 2 .. NodeList.Length(successors) loop
             declare

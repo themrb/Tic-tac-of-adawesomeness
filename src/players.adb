@@ -10,9 +10,13 @@ package body Players is
          -- Would be good if we could store (some of?) the gametree between
          -- moves and then just cull it depending on the new move. Would save a
          -- lot of recomputation.
-         accept Next_Move(previous : in State_Type) do
-            state := previous;
-         end Next_Move;
+         select
+            accept Next_Move(previous : in State_Type) do
+               state := previous;
+            end Next_Move;
+         or
+            terminate;
+         end select;
 
          declare
             GameTreeRoot : GameTree_Type;
