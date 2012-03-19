@@ -13,16 +13,23 @@ begin
    playerO.Initialise;
    playerX.Initialise;
 
-   loop
+   while game.turns /= 64 loop
+
+      IO.Put_Line(Image(game));
+
       playerO.Next_Move(game);
       playerO.Choose_Move(next_move);
 
+      IO.Put_Line("Got move from O: " & Image(next_move));
+
       game := AdvanceMove(game, next_move);
+
+      IO.Put_Line(Image(game));
 
       playerX.Next_Move(game);
       playerX.Choose_Move(next_move);
 
-      game := AdvanceMove(game, next_move);
+      IO.Put_Line("Got move from X: " & Image(next_move));
 
    end loop;
 

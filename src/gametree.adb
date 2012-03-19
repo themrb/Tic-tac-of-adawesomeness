@@ -14,7 +14,7 @@ package body GameTree is
                   temp.state.justWent := NextPlayer(temp.state.justWent);
                   temp.state.current_state(i,j,k) := temp.state.justWent;
                   temp.state.spot := (i,j,k);
-                  temp.state.turns := temp.state.turns + 1;
+                  temp.state.turns := state.state.turns + 1;
                   Prepend(The_List, temp);
                end if;
             end loop;
