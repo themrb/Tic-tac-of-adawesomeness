@@ -8,100 +8,83 @@ package body MinMax is
 
    procedure Min (state : in out GameTree_Type) is
       successors : NodeList.List := Expand(state);
+      node : NodeList.Cursor := NodeList.First(successors);
+      move : GameTree_Type;
    begin
       state.bestVal := BoardValue'Last; -- Set to maximum board-value;
-      declare
-         node : NodeList.Cursor := NodeList.First(successors);
-      begin
---           Put_Line("Min" & Image(state.state));
 
-         -- Check if any of the successors are terminal states.
-         -- Mainly to avoid exploring large portions of the game tree if the
-         -- next move is already fixed.
-         for i in 2 .. NodeList.Length(successors) loop
-            declare
-               move : GameTree_Type := NodeList.Element(node);
-            begin
---                 if(move.state.turns = 64) then
---                    Put_Line("Last" & Image(move.state));
---                    Put_Line(Image(move.state.current_state));
---                 end if;
-               if(Terminal(move.state)) then
-                  state.bestVal :=  -1;
-                  state.best := new GameTree_Type'(move);
-                  return;
-               end if;
-            end;
-            node := NodeList.Next(node);
-         end loop;
+      -- Check if any of the successors are terminal states.
+      -- Mainly to avoid exploring large portions of the game tree if the
+      -- next move is already fixed.
+      for i in 2 .. NodeList.Length(successors) loop
+         move := NodeList.Element(node);
+         if(Terminal(move.state)) then
+            state.bestVal :=  -1;
+            state.best := new GameTree_Type'(move);
+            return;
+         end if;
+         node := NodeList.Next(node);
+      end loop;
 
-         node := NodeList.First(successors);
+      node := NodeList.First(successors);
 
-         -- Didn't find any terminal states above, so we continue MinMax-ing
-         for i in 2 .. NodeList.Length(successors) loop
-            declare
-               move : GameTree_Type := NodeList.Element(node);
-            begin
-               Max(move);
-               if(move.bestVal = -1) then -- Max sees no way of avoiding min's win
-                  state.bestVal := -1;
-                  state.best := new GameTree_Type'(move);
-                  return;
-               elsif(move.bestVal < NodeList.Element(node).bestVal) then
-                  state.bestVal := move.bestVal;
-                  state.best := new GameTree_Type'(move);
-               end if;
-            end;
-            node := NodeList.Next(node);
-         end loop;
-      end;
+      -- Didn't find any terminal states above, so we continue MinMax-ing
+      for i in 2 .. NodeList.Length(successors) loop
+         move := NodeList.Element(node);
+         Max(move);
+         if(move.bestVal = -1) then -- Max sees no way of avoiding min's win
+            state.bestVal := -1;
+            state.best := new GameTree_Type'(move);
+            return;
+         elsif(move.bestVal < NodeList.Element(node).bestVal) then
+            state.bestVal := move.bestVal;
+            state.best := new GameTree_Type'(move);
+         end if;
+         node := NodeList.Next(node);
+      end loop;
    end Min;
 
    procedure Max (state : in out GameTree_Type) is
       successors : NodeList.List := Expand(state);
+      node : NodeList.Cursor := NodeList.First(successors);
+      move : GameTree_Type;
    begin
       state.bestVal := BoardValue'First; -- Set to minimum board-value;
-      declare
-         node : NodeList.Cursor := NodeList.First(successors);
-      begin
---           Put_Line("Max" & Image(state.state));
 
-         -- Check if any of the successors are terminal states.
-         -- Mainly to avoid exploring large portions of the game tree if the
-         -- next move is already fixed.
-         for i in 2 .. NodeList.Length(successors) loop
-            declare
-               move : GameTree_Type := NodeList.Element(node);
-            begin
-               if(Terminal(move.state)) then
-                  state.bestVal :=  1;
-                  state.best := new GameTree_Type'(move);
-                  return;
-               end if;
-            end;
-            node := NodeList.Next(node);
-         end loop;
+      -- Check if any of the successors are terminal states.
+      -- Mainly to avoid exploring large portions of the game tree if the
+      -- next move is already fixed.
+      for i in 2 .. NodeList.Length(successors) loop
 
-         node := NodeList.First(successors);
---           Put_Line(Count_Type'Image(NodeList.Length(successors)));
-         -- Didn't find any terminal states above, so we continue MinMax-ing
-         for i in 2 .. NodeList.Length(successors) loop
-            declare
-               move : GameTree_Type := NodeList.Element(node);
-            begin
-               Min(move);
-               if(move.bestVal = 1) then -- min sees no way of avoiding max's win
-                  state.bestVal := 1;
-                  state.best := new GameTree_Type'(move);
-                  return;
-               elsif(move.bestVal > NodeList.Element(node).bestVal) then
-                  state.bestVal := move.bestVal;
-                  state.best := new GameTree_Type'(move);
-               end if;
-            end;
-            node := NodeList.Next(node);
-         end loop;
-      end;
+         move := NodeList.Element(node);
+
+         if(Terminal(move.state)) then
+            state.bestVal :=  1;
+            state.best := new GameTree_Type'(move);
+            return;
+         end if;
+
+         node := NodeList.Next(node);
+      end loop;
+
+      node := NodeList.First(successors);
+      -- Didn't find any terminal states above, so we continue MinMax-ing
+      for i in 2 .. NodeList.Length(successors) loop
+
+         move := NodeList.Element(node);
+
+         Min(move);
+         if(move.bestVal = 1) then -- min sees no way of avoiding max's win
+            state.bestVal := 1;
+            state.best := new GameTree_Type'(move);
+            return;
+         elsif(move.bestVal > NodeList.Element(node).bestVal) then
+            state.bestVal := move.bestVal;
+            state.best := new GameTree_Type'(move);
+         end if;
+
+         node := NodeList.Next(node);
+      end loop;
    end Max;
 
 --     function Forced_Move_Check (state : in GameTree_Type) return Place is
