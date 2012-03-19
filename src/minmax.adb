@@ -6,7 +6,7 @@ with Ada.Containers; use Ada.Containers;
 
 package body MinMax is
 
-   procedure Min (state : in out GameTree_Type) is
+   procedure Min (state : in out GameTree_Type; depth : in TurnsNo) is
       successors : NodeList.List := Expand(state);
       node : NodeList.Cursor := NodeList.First(successors);
       move : GameTree_Type;
@@ -26,17 +26,24 @@ package body MinMax is
          node := NodeList.Next(node);
       end loop;
 
+
+      if (depth = 0) then
+         state.bestVal := 0;
+         state.best := new GameTree_Type'(move);
+         return;
+      end if;
+
       node := NodeList.First(successors);
 
       -- Didn't find any terminal states above, so we continue MinMax-ing
       for i in 2 .. NodeList.Length(successors) loop
          move := NodeList.Element(node);
-         Max(move);
+         Max(move, depth-1);
          if(move.bestVal = -1) then -- Max sees no way of avoiding min's win
             state.bestVal := -1;
             state.best := new GameTree_Type'(move);
             return;
-         elsif(move.bestVal < NodeList.Element(node).bestVal) then
+         elsif(move.bestVal < state.bestVal) then
             state.bestVal := move.bestVal;
             state.best := new GameTree_Type'(move);
          end if;
@@ -44,7 +51,7 @@ package body MinMax is
       end loop;
    end Min;
 
-   procedure Max (state : in out GameTree_Type) is
+   procedure Max (state : in out GameTree_Type; depth : in TurnsNo) is
       successors : NodeList.List := Expand(state);
       node : NodeList.Cursor := NodeList.First(successors);
       move : GameTree_Type;
@@ -55,7 +62,6 @@ package body MinMax is
       -- Mainly to avoid exploring large portions of the game tree if the
       -- next move is already fixed.
       for i in 2 .. NodeList.Length(successors) loop
-
          move := NodeList.Element(node);
 
          if(Terminal(move.state)) then
@@ -67,18 +73,22 @@ package body MinMax is
          node := NodeList.Next(node);
       end loop;
 
+      if (depth = 0) then
+         state.bestVal := 0;
+         state.best := new GameTree_Type'(move);
+         return;
+      end if;
+
       node := NodeList.First(successors);
       -- Didn't find any terminal states above, so we continue MinMax-ing
       for i in 2 .. NodeList.Length(successors) loop
-
          move := NodeList.Element(node);
-
-         Min(move);
+         Min(move, depth-1);
          if(move.bestVal = 1) then -- min sees no way of avoiding max's win
             state.bestVal := 1;
             state.best := new GameTree_Type'(move);
             return;
-         elsif(move.bestVal > NodeList.Element(node).bestVal) then
+         elsif(move.bestVal > state.bestVal) then
             state.bestVal := move.bestVal;
             state.best := new GameTree_Type'(move);
          end if;

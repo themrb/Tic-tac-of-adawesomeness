@@ -1,3 +1,6 @@
+with Ada.Text_IO; use Ada.Text_IO;
+with Exceptions; use Exceptions;
+
 package body Players is
 
    task body Player is
@@ -22,7 +25,9 @@ package body Players is
             GameTreeRoot : GameTree_Type;
          begin
             GameTreeRoot.state := state;
-            Max(GameTreeRoot);
+
+            Max(GameTreeRoot, 2);
+
             chosenmove := GameTreeRoot.best.state.spot;
          end;
 
@@ -30,6 +35,8 @@ package body Players is
             next := chosenmove;
          end Choose_Move;
       end loop;
+   exception
+      when E : others => Show_Exception (E);
    end Player;
 
 end Players;
