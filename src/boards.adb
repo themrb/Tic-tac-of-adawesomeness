@@ -7,10 +7,10 @@ package body Boards is
 
    function NextPlayer(prev : Cell) return Cell is
    begin
-      if(prev = Empty or prev = O) then
-         return X;
-      else
+      if(prev = Empty or prev = X) then
          return O;
+      else
+         return X;
       end if;
    end NextPlayer;
 

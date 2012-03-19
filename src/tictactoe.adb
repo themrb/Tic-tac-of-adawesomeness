@@ -31,6 +31,7 @@ begin
 
       IO.Put_Line("Got move from X: " & Image(next_move));
 
+      game := AdvanceMove(game, next_move);
    end loop;
 
 end TicTacToe;
