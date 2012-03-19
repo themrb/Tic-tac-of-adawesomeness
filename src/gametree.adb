@@ -17,6 +17,7 @@ package body GameTree is
                   temp.state.current_state(i,j,k) := state.state.justWent;
                   temp.state.spot := (i,j,k);
                   temp.state.turns := state.state.turns + 1;
+                  Put_Line(Image(temp.state));
                   Prepend(The_List, temp);
                end if;
             end loop;
