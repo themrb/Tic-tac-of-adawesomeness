@@ -12,10 +12,12 @@ package Boards is
 
    type Place is array(Coordinate) of Dimension;
 
+   subtype TurnsNo is Natural range 0 .. 64;
+
    type State_Type is record
       justWent : Cell;
       spot : Place;
-      turns : Natural range 0 .. 64;
+      turns : TurnsNo;
       current_state : Board_Type;
    end record;
 

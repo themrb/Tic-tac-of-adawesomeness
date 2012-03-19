@@ -6,7 +6,7 @@ with Ada.Containers; use Ada.Containers;
 
 package body MinMax is
 
-   procedure Min (state : in out GameTree_Type) is
+   procedure Min (state : in out GameTree_Type; depth : in TurnsNo) is
       successors : NodeList.List := Expand(state);
    begin
       state.bestVal := BoardValue'Last; -- Set to maximum board-value;
@@ -35,6 +35,11 @@ package body MinMax is
             node := NodeList.Next(node);
          end loop;
 
+         if (depth = 3) then
+            state.bestVal := 0;
+            return;
+         end if;
+
          node := NodeList.First(successors);
 
          -- Didn't find any terminal states above, so we continue MinMax-ing
@@ -42,7 +47,7 @@ package body MinMax is
             declare
                move : GameTree_Type := NodeList.Element(node);
             begin
-               Max(move);
+               Max(move, depth+1);
                if(move.bestVal = -1) then -- Max sees no way of avoiding min's win
                   state.bestVal := -1;
                   state.best := new GameTree_Type'(move);
@@ -57,7 +62,7 @@ package body MinMax is
       end;
    end Min;
 
-   procedure Max (state : in out GameTree_Type) is
+   procedure Max (state : in out GameTree_Type; depth : in TurnsNo) is
       successors : NodeList.List := Expand(state);
    begin
       state.bestVal := BoardValue'First; -- Set to minimum board-value;
@@ -82,6 +87,11 @@ package body MinMax is
             node := NodeList.Next(node);
          end loop;
 
+         if (depth = 3) then
+            state.bestVal := 0;
+            return;
+         end if;
+
          node := NodeList.First(successors);
 --           Put_Line(Count_Type'Image(NodeList.Length(successors)));
          -- Didn't find any terminal states above, so we continue MinMax-ing
@@ -89,7 +99,7 @@ package body MinMax is
             declare
                move : GameTree_Type := NodeList.Element(node);
             begin
-               Min(move);
+               Min(move, depth+1);
                if(move.bestVal = 1) then -- min sees no way of avoiding max's win
                   state.bestVal := 1;
                   state.best := new GameTree_Type'(move);
