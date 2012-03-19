@@ -22,7 +22,7 @@ package body Players is
             GameTreeRoot : GameTree_Type;
          begin
             GameTreeRoot.state := state;
-            Max(GameTreeRoot);
+            Max(GameTreeRoot, 0);
             chosenmove := GameTreeRoot.best.state.spot;
          end;
 
