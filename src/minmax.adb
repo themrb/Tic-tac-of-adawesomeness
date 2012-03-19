@@ -13,7 +13,7 @@ package body MinMax is
       declare
          node : NodeList.Cursor := NodeList.First(successors);
       begin
-         Put_Line("Min" & Image(state.state));
+--           Put_Line("Min" & Image(state.state));
 
          -- Check if any of the successors are terminal states.
          -- Mainly to avoid exploring large portions of the game tree if the
@@ -64,7 +64,7 @@ package body MinMax is
       declare
          node : NodeList.Cursor := NodeList.First(successors);
       begin
-         Put_Line("Max" & Image(state.state));
+--           Put_Line("Max" & Image(state.state));
 
          -- Check if any of the successors are terminal states.
          -- Mainly to avoid exploring large portions of the game tree if the

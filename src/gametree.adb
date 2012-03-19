@@ -14,10 +14,10 @@ package body GameTree is
                if(state.state.current_state(i,j,k) = Empty) then
                   temp := state;
                   temp.state.justWent := NextPlayer(state.state.justWent);
-                  temp.state.current_state(i,j,k) := state.state.justWent;
+                  temp.state.current_state(i,j,k) := temp.state.justWent;
                   temp.state.spot := (i,j,k);
                   temp.state.turns := state.state.turns + 1;
-                  Put_Line(Image(temp.state));
+--                    Put_Line(Image(temp.state));
                   Prepend(The_List, temp);
                end if;
             end loop;
