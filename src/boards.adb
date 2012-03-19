@@ -1,3 +1,7 @@
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Ada.Characters.Latin_1; use Ada.Characters.Latin_1;
+with Ada.Text_IO; use Ada.Text_IO;
+
 package body Boards is
 
    function Symmetric(stateA, stateB : in State_Type) return Boolean is
@@ -35,6 +39,26 @@ package body Boards is
    begin
       return "(" & Dimension'Image(spot(x)) & "," & Dimension'Image(spot(y))
         & "," & Dimension'Image(spot(z)) & ")";
+   end;
+
+   function Image(board : Board_Type) return String is
+      temp : Unbounded_String;
+   begin
+      for i in Dimension'Range loop
+         for j in Dimension'Range loop
+            temp := temp & "[";
+            for k in Dimension'Range loop
+               temp := temp & Cell'Image(board(i,j,k));
+               if(k /= Dimension'Last) then
+                  temp := temp & ",";
+               end if;
+            end loop;
+            temp := temp & "]" & LF;
+         end loop;
+         temp := temp & LF;
+      end loop;
+
+      return To_String(temp);
    end;
 
    function Terminal(state : in State_Type) return Boolean is
@@ -116,6 +140,11 @@ package body Boards is
             corner := corner and state.current_state(3-i,i,i) = state.justWent;
          end loop;
       end if;
+
+--        Put_Line(Boolean'Image(xrow) & "," & Boolean'Image(yrow) & "," &
+--                 Boolean'Image(zrow) & "," & Boolean'Image(xdiag) & "," &
+--                 Boolean'Image(ydiag) & "," & Boolean'Image(zdiag) & "," &
+--                 Boolean'Image(corner));
 
       return corner;
 

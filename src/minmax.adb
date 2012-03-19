@@ -13,7 +13,6 @@ package body MinMax is
       declare
          node : NodeList.Cursor := NodeList.First(successors);
       begin
-         --Put_Line("This happened (Min)");
          Put_Line("Min" & Image(state.state));
 
          -- Check if any of the successors are terminal states.
@@ -23,6 +22,10 @@ package body MinMax is
             declare
                move : GameTree_Type := NodeList.Element(node);
             begin
+--                 if(move.state.turns = 64) then
+--                    Put_Line("Last" & Image(move.state));
+--                    Put_Line(Image(move.state.current_state));
+--                 end if;
                if(Terminal(move.state)) then
                   state.bestVal :=  -1;
                   state.best := new GameTree_Type'(move);
@@ -61,7 +64,6 @@ package body MinMax is
       declare
          node : NodeList.Cursor := NodeList.First(successors);
       begin
-         --Put_Line("This happened (Max)");
          Put_Line("Max" & Image(state.state));
 
          -- Check if any of the successors are terminal states.

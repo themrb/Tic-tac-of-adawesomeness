@@ -33,4 +33,6 @@ package Boards is
 
    function Image(spot : Place) return String;
 
+   function Image(board : Board_Type) return String;
+
 end Boards;
