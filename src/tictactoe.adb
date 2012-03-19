@@ -13,7 +13,7 @@ begin
    playerO.Initialise;
    playerX.Initialise;
 
-   while game.turns /= 64 loop
+   while game.turns <= 64 loop
 
       IO.Put_Line(Image(game));
 
