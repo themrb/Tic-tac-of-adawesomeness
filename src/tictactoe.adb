@@ -15,7 +15,7 @@ begin
 
    while game.turns <= 64 loop
 
-      IO.Put_Line(Image(game));
+      --IO.Put_Line(Image(game));
 
       playerO.Next_Move(game);
       playerO.Choose_Move(next_move);
@@ -29,7 +29,7 @@ begin
          exit;
       end if;
 
-      IO.Put_Line(Image(game));
+      --IO.Put_Line(Image(game));
 
       playerX.Next_Move(game);
       playerX.Choose_Move(next_move);
