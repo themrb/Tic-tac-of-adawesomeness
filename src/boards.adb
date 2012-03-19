@@ -25,4 +25,17 @@ package body Boards is
       return newState;
    end AdvanceMove;
 
+   function Image(state : State_Type) return String is
+   begin
+      return "[" & Cell'Image(state.justWent) & "," & Image(state.spot)
+        & "," & Natural'Image(state.turns) & "]";
+   end;
+
+   function Image(spot : Place) return String is
+   begin
+      return "(" & Dimension'Image(spot(x)) & "," & Dimension'Image(spot(y))
+        & "," & Dimension'Image(spot(z)) & ")";
+   end;
+
+
 end Boards;

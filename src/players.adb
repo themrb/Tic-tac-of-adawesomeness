@@ -1,4 +1,3 @@
-
 package body Players is
 
    task body Player is
@@ -8,6 +7,9 @@ package body Players is
       accept Initialise;
 
       loop
+         -- Would be good if we could store (some of?) the gametree between
+         -- moves and then just cull it depending on the new move. Would save a
+         -- lot of recomputation.
          accept Next_Move(previous : in State_Type) do
             state := previous;
          end Next_Move;

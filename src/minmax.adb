@@ -1,11 +1,16 @@
 with GameTree; use GameTree;
 with Boards; use Boards;
+with Ada.Text_IO; use Ada.Text_IO;
 
 package body MinMax is
 
    function Terminal(state : in State_Type) return Boolean is
       xrow, yrow, zrow, xdiag, ydiag, zdiag, corner : Boolean := True;
    begin
+      if(state.turns < 4) then
+         return False;
+      end if;
+
       for i in Dimension'Range loop
          xrow := xrow and state.current_state(i,state.spot(y), state.spot(z)) = state.justWent;
          yrow := yrow and state.current_state(state.spot(x),i, state.spot(z)) = state.justWent;

@@ -27,4 +27,8 @@ package Boards is
 
    function AdvanceMove(state : State_Type; move : Place) return State_Type;
 
+   function Image(state : State_Type) return String;
+
+   function Image(spot : Place) return String;
+
 end Boards;
