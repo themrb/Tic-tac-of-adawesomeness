@@ -14,4 +14,15 @@ package body Boards is
       end if;
    end NextPlayer;
 
+   function AdvanceMove(state : State_Type; move : Place) return State_Type is
+      PlacedPiece : Cell := NextPlayer(state.justWent);
+      NewState : State_Type := state;
+   begin
+      NewState.current_state(move(x), move(y), move(z)) := PlacedPiece;
+      NewState.turns := NewState.turns + 1;
+      NewState.justWent := PlacedPiece;
+      NewState.spot := move;
+      return NewState;
+   end AdvanceMove;
+
 end Boards;
