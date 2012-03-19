@@ -24,6 +24,11 @@ begin
 
       game := AdvanceMove(game, next_move);
 
+      if(Terminal(game)) then
+         IO.Put_Line("O wins");
+         exit;
+      end if;
+
       IO.Put_Line(Image(game));
 
       playerX.Next_Move(game);
@@ -32,6 +37,11 @@ begin
       IO.Put_Line("Got move from X: " & Image(next_move));
 
       game := AdvanceMove(game, next_move);
+
+      if(Terminal(game)) then
+         IO.Put_Line("X wins");
+         exit;
+      end if;
    end loop;
 
 end TicTacToe;
