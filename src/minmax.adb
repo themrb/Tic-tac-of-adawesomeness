@@ -173,39 +173,39 @@ package body MinMax is
       end;
    end Max;
 
-   function Forced_Move_Check (state : in GameTree_Type) return Place is
-      successors : NodeList.List;
-      switch_move_state : GameTree_Type := state;
-   begin
-      -- need at least 4 moves for there to be a fully forced move
-      if(switch_move_state.state.turns > 4) then
-
-         -- expand game tree for other player
-         if(switch_move_state.state.justWent = X) then
-            switch_move_state.state.justWent := O;
-         elsif(switch_move_state.state.justWent = O) then
-            switch_move_state.state.justWent := X;
-         end if;
-
-         sucessors := Expand(state);
-
-         -- Check if any of the successors are terminal states.
-         -- This means the opponent will have a winning move
-         for i in 2 .. NodeList.Length(successors) loop
-            declare
-               move : GameTree_Type := NodeList.Element(node);
-            begin
-               if(Terminal(move.state)) then
-                  return move;
-               end if;
-            end;
-            node := NodeList.Next(node);
-         end loop;
-      end if;
-
-      -- We haven't found any forced move
-      return null;
-
-end Forced_Move_Check;
+--     function Forced_Move_Check (state : in GameTree_Type) return Place is
+--        successors : NodeList.List;
+--        switch_move_state : GameTree_Type := state;
+--     begin
+--        -- need at least 4 moves for there to be a fully forced move
+--        if(switch_move_state.state.turns > 4) then
+--
+--           -- expand game tree for other player
+--           if(switch_move_state.state.justWent = X) then
+--              switch_move_state.state.justWent := O;
+--           elsif(switch_move_state.state.justWent = O) then
+--              switch_move_state.state.justWent := X;
+--           end if;
+--
+--           successors := Expand(switch_move_state);
+--
+--           -- Check if any of the successors are terminal states.
+--           -- This means the opponent will have a winning move
+--           for i in 2 .. NodeList.Length(successors) loop
+--              declare
+--                 move : GameTree_Type := NodeList.Element(node);
+--              begin
+--                 if(Terminal(move.state)) then
+--                    return move.state.spot;
+--                 end if;
+--              end;
+--              node := NodeList.Next(node);
+--           end loop;
+--        end if;
+--
+--        -- We haven't found any forced move
+--        return null;
+--
+--  end Forced_Move_Check;
 
 end MinMax;
