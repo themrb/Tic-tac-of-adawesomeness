@@ -23,12 +23,15 @@ package body Players is
 
          declare
             GameTreeRoot : GameTree_Type;
+            value, alpha, beta : BoardValue;
          begin
+            alpha := BoardValue'First;
+            beta := BoardValue'Last;
             GameTreeRoot.state := state;
 
-            Max(GameTreeRoot, 1);
+            Max(GameTreeRoot, 5, value, alpha, beta);
 
-            Put_Line(Image(GameTreeRoot.state) & GameTreeRoot.bestVal'Img &" "& Name'Img);
+--              Put_Line(Image(GameTreeRoot.state) & GameTreeRoot.bestVal'Img &" "& Name'Img);
 
             chosenmove := GameTreeRoot.best.state.spot;
          end;

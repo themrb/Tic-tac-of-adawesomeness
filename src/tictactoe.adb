@@ -25,7 +25,7 @@ begin
       game := AdvanceMove(game, next_move);
 
       if(Terminal(game)) then
-         IO.Put_Line("O wins");
+         IO.Put_Line("O wins in " & game.turns'Img & " moves");
          exit;
       end if;
 
@@ -39,7 +39,7 @@ begin
       game := AdvanceMove(game, next_move);
 
       if(Terminal(game)) then
-         IO.Put_Line("X wins");
+         IO.Put_Line("X wins in " & game.turns'Img & " moves");
          exit;
       end if;
    end loop;

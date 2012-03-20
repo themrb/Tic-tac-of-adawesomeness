@@ -6,12 +6,13 @@ with Ada.Containers; use Ada.Containers;
 
 package body MinMax is
 
-   procedure Min (state : in out GameTree_Type; depth : in TurnsNo) is
+   procedure Min (state : in out GameTree_Type; depth : in TurnsNo; value : out BoardValue;
+                    alpha, beta : in out BoardValue) is
       successors : NodeList.List := Expand(state);
       node : NodeList.Cursor := NodeList.First(successors);
       move : GameTree_Type;
    begin
-      state.bestVal := BoardValue'Last; -- Set to maximum board-value;
+      value := BoardValue'Last;  -- Set to maximum board-value;
 
       -- Check if any of the successors are terminal states.
       -- Mainly to avoid exploring large portions of the game tree if the
@@ -19,9 +20,8 @@ package body MinMax is
       for i in 2 .. NodeList.Length(successors) loop
          move := NodeList.Element(node);
          if(Terminal(move.state)) then
-            state.bestVal :=  -1;
+            value :=  -1;
             state.best := new GameTree_Type'(move);
-            Put_Line("A Min");
             return;
          end if;
          node := NodeList.Next(node);
@@ -29,9 +29,8 @@ package body MinMax is
 
 
       if (depth = 0) then
-         state.bestVal := 0;
+         value := 0;
          state.best := new GameTree_Type'(move);
-         Put_Line("B Min");
          return;
       end if;
 
@@ -40,27 +39,30 @@ package body MinMax is
       -- Didn't find any terminal states above, so we continue MinMax-ing
       for i in 2 .. NodeList.Length(successors) loop
          move := NodeList.Element(node);
-         Max(move, depth-1);
-         if(move.bestVal = -1) then -- Max sees no way of avoiding min's win
-            state.bestVal := -1;
+         Max(move, depth-1, value, alpha, beta);
+         if(value <= alpha) then -- Max sees no way of avoiding min's win
+            value := -1;
             state.best := new GameTree_Type'(move);
-            Put_Line("C Min");
             return;
-         elsif(move.bestVal < state.bestVal) then
-            state.bestVal := move.bestVal;
+         elsif(value < beta) then
+            beta := value;
             state.best := new GameTree_Type'(move);
-            Put_Line("D Min");
          end if;
          node := NodeList.Next(node);
       end loop;
+
+      if(state.best = null) then
+         state.best := new GameTree_Type'(move);
+      end if;
    end Min;
 
-   procedure Max (state : in out GameTree_Type; depth : in TurnsNo) is
+   procedure Max (state : in out GameTree_Type; depth : in TurnsNo; value : out BoardValue;
+                    alpha, beta : in out BoardValue) is
       successors : NodeList.List := Expand(state);
       node : NodeList.Cursor := NodeList.First(successors);
       move : GameTree_Type;
    begin
-      state.bestVal := BoardValue'First; -- Set to minimum board-value;
+      value := BoardValue'First; -- Set to minimum board-value;
 
       -- Check if any of the successors are terminal states.
       -- Mainly to avoid exploring large portions of the game tree if the
@@ -69,9 +71,8 @@ package body MinMax is
          move := NodeList.Element(node);
 
          if(Terminal(move.state)) then
-            state.bestVal :=  1;
+            value := 1;
             state.best := new GameTree_Type'(move);
-            Put_Line("A Max");
             return;
          end if;
 
@@ -79,9 +80,8 @@ package body MinMax is
       end loop;
 
       if (depth = 0) then
-         state.bestVal := 0;
+         value := 0;
          state.best := new GameTree_Type'(move);
-         Put_Line("B Max");
          return;
       end if;
 
@@ -89,23 +89,22 @@ package body MinMax is
       -- Didn't find any terminal states above, so we continue MinMax-ing
       for i in 2 .. NodeList.Length(successors) loop
          move := NodeList.Element(node);
-         Min(move, depth-1);
-         if(move.bestVal = 1) then -- min sees no way of avoiding max's win
-            state.bestVal := 1;
+         alpha := alpha;
+         beta := beta;
+         Min(move, depth-1, value, alpha, beta);
+         if(value >= beta) then -- min sees no way of avoiding max's win
+            value := 1;
             state.best := new GameTree_Type'(move);
-            Put_Line("C Max");
             return;
-         elsif(move.bestVal > state.bestVal) then
-            state.bestVal := move.bestVal;
+         elsif(value > alpha) then
+            alpha := value;
             state.best := new GameTree_Type'(move);
-            Put_Line("D Max");
          end if;
 
          node := NodeList.Next(node);
       end loop;
 
       if(state.best = null) then
-         state.bestVal := move.bestVal;
          state.best := new GameTree_Type'(move);
       end if;
    end Max;
