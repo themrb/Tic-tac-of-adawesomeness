@@ -14,7 +14,7 @@ package GameTree is
 --        parent : GameTree_Access;
       expanded : Boolean := False;
       best : GameTree_Access := null;
-      bestVal : BoardValue;
+--        bestVal : BoardValue;
    end record;
 
    package NodeList is new Ada.Containers.Doubly_Linked_Lists(GameTree_Type);
