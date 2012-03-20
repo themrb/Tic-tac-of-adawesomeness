@@ -21,6 +21,7 @@ package body MinMax is
          if(Terminal(move.state)) then
             state.bestVal :=  -1;
             state.best := new GameTree_Type'(move);
+            Put_Line("A Min");
             return;
          end if;
          node := NodeList.Next(node);
@@ -30,6 +31,7 @@ package body MinMax is
       if (depth = 0) then
          state.bestVal := 0;
          state.best := new GameTree_Type'(move);
+         Put_Line("B Min");
          return;
       end if;
 
@@ -42,10 +44,12 @@ package body MinMax is
          if(move.bestVal = -1) then -- Max sees no way of avoiding min's win
             state.bestVal := -1;
             state.best := new GameTree_Type'(move);
+            Put_Line("C Min");
             return;
          elsif(move.bestVal < state.bestVal) then
             state.bestVal := move.bestVal;
             state.best := new GameTree_Type'(move);
+            Put_Line("D Min");
          end if;
          node := NodeList.Next(node);
       end loop;
@@ -67,6 +71,7 @@ package body MinMax is
          if(Terminal(move.state)) then
             state.bestVal :=  1;
             state.best := new GameTree_Type'(move);
+            Put_Line("A Max");
             return;
          end if;
 
@@ -76,6 +81,7 @@ package body MinMax is
       if (depth = 0) then
          state.bestVal := 0;
          state.best := new GameTree_Type'(move);
+         Put_Line("B Max");
          return;
       end if;
 
@@ -87,14 +93,21 @@ package body MinMax is
          if(move.bestVal = 1) then -- min sees no way of avoiding max's win
             state.bestVal := 1;
             state.best := new GameTree_Type'(move);
+            Put_Line("C Max");
             return;
          elsif(move.bestVal > state.bestVal) then
             state.bestVal := move.bestVal;
             state.best := new GameTree_Type'(move);
+            Put_Line("D Max");
          end if;
 
          node := NodeList.Next(node);
       end loop;
+
+      if(state.best = null) then
+         state.bestVal := move.bestVal;
+         state.best := new GameTree_Type'(move);
+      end if;
    end Max;
 
 --     function Forced_Move_Check (state : in GameTree_Type) return Place is
