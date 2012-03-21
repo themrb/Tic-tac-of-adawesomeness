@@ -8,6 +8,7 @@ package GameTree is
 
    type Level_Type is new Natural range 0..64;
    type Children_Type is array(Level_Type range <>) of GameTree_Access;
+   type Children_Range is new Natural range 1..64;
 
    type GameTree_Type is record
       state : State_Type;
@@ -17,9 +18,11 @@ package GameTree is
 --        bestVal : BoardValue;
    end record;
 
+   type GameTree_Children is array(1..64) of GameTree_Type;
+
    package NodeList is new Ada.Containers.Doubly_Linked_Lists(GameTree_Type);
    use NodeList;
 
-   function Expand(state : in GameTree_Type) return NodeList.List;
+   function Expand(state : in GameTree_Type) return GameTree_Children;
 
 end GameTree;

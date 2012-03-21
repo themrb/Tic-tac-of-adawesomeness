@@ -8,8 +8,8 @@ package body MinMax is
 
    procedure Min (state : in out GameTree_Type; depth : in TurnsNo; value : out BoardValue;
                     alpha, beta : in BoardValue) is
-      successors : NodeList.List := Expand(state);
-      node : NodeList.Cursor := NodeList.First(successors);
+      successors : GameTree_Children := Expand(state);
+--        node : GameTree_Access := successors(0);
       move : GameTree_Type;
       a, b : BoardValue;
    begin
@@ -20,14 +20,13 @@ package body MinMax is
       -- Check if any of the successors are terminal states.
       -- Mainly to avoid exploring large portions of the game tree if the
       -- next move is already fixed.
-      for i in 2 .. NodeList.Length(successors) loop
-         move := NodeList.Element(node);
+      for i in 1.. (63-state.state.turns) loop
+         move := successors(i);
          if(Terminal(move.state)) then
             value :=  -1;
             state.best := new GameTree_Type'(move);
             return;
          end if;
-         node := NodeList.Next(node);
       end loop;
 
 
@@ -37,11 +36,10 @@ package body MinMax is
          return;
       end if;
 
-      node := NodeList.First(successors);
 
       -- Didn't find any terminal states above, so we continue MinMax-ing
-      for i in 2 .. NodeList.Length(successors) loop
-         move := NodeList.Element(node);
+      for i in 1.. (63-state.state.turns) loop
+         move := successors(i);
          Max(move, depth-1, value, a, b);
          if(value <= a) then -- Max sees no way of avoiding min's win
             value := -1;
@@ -51,7 +49,6 @@ package body MinMax is
             b := value;
             state.best := new GameTree_Type'(move);
          end if;
-         node := NodeList.Next(node);
       end loop;
 
       if(state.best = null) then
@@ -61,8 +58,7 @@ package body MinMax is
 
    procedure Max (state : in out GameTree_Type; depth : in TurnsNo; value : out BoardValue;
                     alpha, beta : in BoardValue) is
-      successors : NodeList.List := Expand(state);
-      node : NodeList.Cursor := NodeList.First(successors);
+      successors : GameTree_Children := Expand(state);
       move : GameTree_Type;
       a, b : BoardValue;
    begin
@@ -73,8 +69,8 @@ package body MinMax is
       -- Check if any of the successors are terminal states.
       -- Mainly to avoid exploring large portions of the game tree if the
       -- next move is already fixed.
-      for i in 2 .. NodeList.Length(successors) loop
-         move := NodeList.Element(node);
+      for i in 1.. (63-state.state.turns) loop
+         move := successors(i);
 
          if(Terminal(move.state)) then
             value := 1;
@@ -82,7 +78,6 @@ package body MinMax is
             return;
          end if;
 
-         node := NodeList.Next(node);
       end loop;
 
       if (depth = 0) then
@@ -91,10 +86,9 @@ package body MinMax is
          return;
       end if;
 
-      node := NodeList.First(successors);
       -- Didn't find any terminal states above, so we continue MinMax-ing
-      for i in 2 .. NodeList.Length(successors) loop
-         move := NodeList.Element(node);
+      for i in 1.. (63-state.state.turns) loop
+         move := successors(i);
          Min(move, depth-1, value, a, b);
          if(value >= b) then -- min sees no way of avoiding max's win
             value := 1;
@@ -105,7 +99,6 @@ package body MinMax is
             state.best := new GameTree_Type'(move);
          end if;
 
-         node := NodeList.Next(node);
       end loop;
 
       if(state.best = null) then
