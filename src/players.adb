@@ -29,7 +29,7 @@ package body Players is
             beta := BoardValue'Last;
             GameTreeRoot.state := state;
 
-            Max(GameTreeRoot, 5, value, alpha, beta);
+            Max(GameTreeRoot, 6, value, alpha, beta);
 
 --              Put_Line(Image(GameTreeRoot.state) & GameTreeRoot.bestVal'Img &" "& Name'Img);
 
