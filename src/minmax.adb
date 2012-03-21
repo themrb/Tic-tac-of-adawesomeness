@@ -2,7 +2,9 @@ with GameTree; use GameTree;
 with Boards; use Boards;
 with Ada.Text_IO; use Ada.Text_IO;
 
-with Ada.Containers; use Ada.Containers;
+use GameTree.NodeList;
+
+
 
 package body MinMax is
 
@@ -20,7 +22,7 @@ package body MinMax is
       -- Check if any of the successors are terminal states.
       -- Mainly to avoid exploring large portions of the game tree if the
       -- next move is already fixed.
-      for i in 2 .. NodeList.Length(successors) loop
+      while node /= No_Element loop
          move := NodeList.Element(node);
          if(Terminal(move.state)) then
             value :=  -1;
@@ -40,7 +42,7 @@ package body MinMax is
       node := NodeList.First(successors);
 
       -- Didn't find any terminal states above, so we continue MinMax-ing
-      for i in 2 .. NodeList.Length(successors) loop
+      while node /= No_Element loop
          move := NodeList.Element(node);
          Max(move, depth-1, value, a, b);
          if(value <= a) then -- Max sees no way of avoiding min's win
@@ -73,9 +75,8 @@ package body MinMax is
       -- Check if any of the successors are terminal states.
       -- Mainly to avoid exploring large portions of the game tree if the
       -- next move is already fixed.
-      for i in 2 .. NodeList.Length(successors) loop
+      while node /= No_Element loop
          move := NodeList.Element(node);
-
          if(Terminal(move.state)) then
             value := 1;
             state.best := new GameTree_Type'(move);
@@ -93,7 +94,7 @@ package body MinMax is
 
       node := NodeList.First(successors);
       -- Didn't find any terminal states above, so we continue MinMax-ing
-      for i in 2 .. NodeList.Length(successors) loop
+      while node /= No_Element loop
          move := NodeList.Element(node);
          Min(move, depth-1, value, a, b);
          if(value >= b) then -- min sees no way of avoiding max's win
