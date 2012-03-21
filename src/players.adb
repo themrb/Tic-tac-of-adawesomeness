@@ -31,7 +31,7 @@ package body Players is
 
             Max(GameTreeRoot, 6, value, alpha, beta);
 
---              Put_Line(Image(GameTreeRoot.state) & GameTreeRoot.bestVal'Img &" "& Name'Img);
+            Put_Line(Image(GameTreeRoot.best.state) & " " & value'Img &" "& Name'Img);
 
             chosenmove := GameTreeRoot.best.state.spot;
          end;
