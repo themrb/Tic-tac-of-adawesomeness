@@ -1,13 +1,15 @@
 with Boards; use Boards;
 with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Unchecked_Deallocation;
 
 package body GameTree is
 
-   function Expand(state : in GameTree_Type) return GameTree_Children is
+   function Expand(state : in GameTree_Type) return Children_Access is
       temp : aliased GameTree_Type;
-      Children : GameTree_Children;
+      Children : Children_Access;
       Child_Counter : Children_Range := Children_Range'First;
    begin
+      Children := new GameTree_Children;
 --        temp.parent := new GameTree_Type'(state);
       for i in Dimension'Range loop
          for j in Dimension'Range loop
@@ -21,7 +23,7 @@ package body GameTree is
 --                    Put_Line(Image(temp.state));
 --                  Prepend(The_List, temp);
 --                    Put_Line(Child_Counter'Img);
-                  Children(Integer(Child_Counter)) := temp;
+                  Children.successors(Integer(Child_Counter)) := temp;
                   if (Integer(Child_Counter) /= 64) then
                      Child_Counter := Child_Counter + 1;
                   end if;
