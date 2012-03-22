@@ -15,7 +15,7 @@ package GameTree is
       state : State_Type;
 --        parent : GameTree_Access;
       expanded : Boolean := False;
-      best : GameTree_Access := null;
+--        best : GameTree_Access := null;
 --        bestVal : BoardValue;
    end record;
 

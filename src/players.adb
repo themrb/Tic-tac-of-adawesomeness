@@ -5,6 +5,7 @@ package body Players is
 
    task body Player is
       state : State_Type;
+      chosentree : GameTree_Type;
       chosenmove : Place;
    begin
       accept Initialise;
@@ -29,11 +30,11 @@ package body Players is
             beta := BoardValue'Last;
             GameTreeRoot.state := state;
 
-            Max(GameTreeRoot, 6, value, alpha, beta);
+            Max(GameTreeRoot, 7, value, chosentree, alpha, beta);
 
-            Put_Line(Image(GameTreeRoot.best.state) & " " & value'Img &" "& Name'Img);
+            Put_Line(Image(chosentree.state) & " " & value'Img &" "& Name'Img);
 
-            chosenmove := GameTreeRoot.best.state.spot;
+            chosenmove := chosentree.state.spot;
          end;
 
          accept Choose_Move(next : out Place) do
