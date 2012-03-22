@@ -8,7 +8,7 @@ use GameTree.NodeList;
 
 package body MinMax is
 
-   procedure Min (state : in out GameTree_Type; depth : in TurnsNo; outValue : out BoardValue;
+   procedure Min (state : in out GameTree_Type; depth : in TurnsNo; outValue : out BoardValue; best : out GameTree_Type;
                     alpha, beta : in BoardValue) is
       successors : Children_Access := Expand(state);
 --        node : GameTree_Access := successors(0);
@@ -19,6 +19,8 @@ package body MinMax is
       a := alpha;
       b := beta;
       value := BoardValue'Last;  -- Set to maximum board-value;
+      outValue := value;
+      best := successors.successors(1);
 
       -- Check if any of the successors are terminal states.
       -- Mainly to avoid exploring large portions of the game tree if the
@@ -28,7 +30,7 @@ package body MinMax is
          move := successors.successors(i);
          if(Terminal(move.state)) then
             outValue :=  -1;
-            state.best := new GameTree_Type'(move);
+            best := move;
             Free(successors);
             return;
          end if;
@@ -37,7 +39,7 @@ package body MinMax is
 
       if (depth = 0) then
          outValue := 0;
-         state.best := new GameTree_Type'(move);
+         best := move;
          Free(successors);
          return;
       end if;
@@ -46,30 +48,35 @@ package body MinMax is
       -- Didn't find any terminal states above, so we continue MinMax-ing
       for i in 1.. (64-state.state.turns) loop
          move := successors.successors(i);
-         Max(move, depth-1, outValue, a, b);
+         declare
+            chosentree : GameTree_Type;
+         begin
+            Max(move, depth-1, outValue, chosentree, a, b);
+         end;
+
          if(outValue < value) then
             value := outValue;
          end if;
 
          if(value <= a) then -- Max sees no way of avoiding min's win
             outValue := value;
-            state.best := new GameTree_Type'(move);
+            best := move;
             Free(successors);
             return;
          elsif(value < b) then
             b := value;
-            state.best := new GameTree_Type'(move);
+            best := move;
          end if;
       end loop;
 
-      if(state.best = null) then
-         outValue := value;
-         state.best := new GameTree_Type'(move);
-      end if;
+--        if(best = null) then
+--           outValue := value;
+--           best := move;
+--        end if;
       Free(successors);
    end Min;
 
-   procedure Max (state : in out GameTree_Type; depth : in TurnsNo; outValue : out BoardValue;
+   procedure Max (state : in out GameTree_Type; depth : in TurnsNo; outValue : out BoardValue; best : out GameTree_Type;
                     alpha, beta : in BoardValue) is
       successors : Children_Access := Expand(state);
       move : GameTree_Type;
@@ -79,6 +86,8 @@ package body MinMax is
       a := alpha;
       b := beta;
       value := BoardValue'First; -- Set to minimum board-value;
+      outValue := value;
+      best := successors.successors(1);
 
       -- Check if any of the successors are terminal states.
       -- Mainly to avoid exploring large portions of the game tree if the
@@ -87,7 +96,7 @@ package body MinMax is
          move := successors.successors(i);
          if(Terminal(move.state)) then
             outValue := 1;
-            state.best := new GameTree_Type'(move);
+            best := move;
             Free(successors);
             return;
          end if;
@@ -96,7 +105,7 @@ package body MinMax is
 
       if (depth = 0) then
          outValue := 0;
-         state.best := new GameTree_Type'(move);
+         best := move;
          Free(successors);
          return;
       end if;
@@ -104,7 +113,11 @@ package body MinMax is
       -- Didn't find any terminal states above, so we continue MinMax-ing
       for i in 1.. (64-state.state.turns) loop
          move := successors.successors(i);
-         Min(move, depth-1, outValue, a, b);
+         declare
+            chosentree : GameTree_Type;
+         begin
+            Min(move, depth-1, outValue, chosentree, a, b);
+         end;
 
          if(outValue > value) then
             value := outValue;
@@ -112,20 +125,20 @@ package body MinMax is
 
          if(value >= b) then -- min sees no way of avoiding max's win
             outValue := value;
-            state.best := new GameTree_Type'(move);
+            best := move;
             Free(successors);
             return;
          elsif(value > a) then
             a := value;
-            state.best := new GameTree_Type'(move);
+            best := move;
          end if;
 
       end loop;
 
-      if(state.best = null) then
-         outValue := value;
-         state.best := new GameTree_Type'(move);
-      end if;
+--        if(state.best = null) then
+--           outValue := value;
+--           best := move;
+--        end if;
 
       Free(successors);
    end Max;
