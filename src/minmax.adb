@@ -19,7 +19,6 @@ package body MinMax is
       a := alpha;
       b := beta;
       value := BoardValue'Last;  -- Set to maximum board-value;
-      outValue := value;
       best := successors.successors(1);
 
       -- Check if any of the successors are terminal states.
@@ -53,15 +52,17 @@ package body MinMax is
             maxValue : BoardValue;
          begin
             Max(move, depth-1, maxValue, chosentree, a, b);
-            if (depth = 5) then
-               Put_Line("Called max!");
-            end if;
+--              if (depth = 5) then
+--                 Put_Line("Called max! " & a'Img & " " & b'Img);
+--              end if;
+--
+--              if (maxValue = 1 and depth = 5) then
+--                 Put_Line("Wow! Guaranteed loss!");
+--              end if;
 
             if(maxValue < value) then
                value := maxValue;
-               if (value = -1 and depth = 5) then
-                  Put_Line("Wow! Guaranteed loss!");
-               end if;
+               best := move;
             end if;
          end;
 
@@ -81,6 +82,11 @@ package body MinMax is
 --           outValue := value;
 --           best := move;
 --        end if;
+      outValue := value;
+
+--                 if (depth = 5) then
+--                    Put_Line("Hit the end without returning, leaving with " & outValue'Img);
+--                 end if;
       Free(successors);
    end Min;
 
@@ -94,7 +100,6 @@ package body MinMax is
       a := alpha;
       b := beta;
       value := BoardValue'First; -- Set to minimum board-value;
-      outValue := value;
       best := successors.successors(1);
 
       -- Check if any of the successors are terminal states.
@@ -126,15 +131,16 @@ package body MinMax is
             minValue : BoardValue;
          begin
             Min(move, depth-1, minValue, chosentree, a, b);
-            if (depth = 6) then
-               Put_Line("Called min!");
-            end if;
+--              if (depth = 6) then
+--                 Put_Line("Called min!");
+--              end if;
 
             if(minValue > value) then
                value := minValue;
-               if (value = 1 and depth = 6) then
-                  Put_Line("Wow! Guaranteed win here!");
-               end if;
+               best := move;
+--                 if (value = 1 and depth = 6) then
+--                    Put_Line("Wow! Guaranteed win here!");
+--                 end if;
             end if;
          end;
 
@@ -156,6 +162,7 @@ package body MinMax is
 --           outValue := value;
 --           best := move;
 --        end if;
+      outValue := value;
 
       Free(successors);
    end Max;

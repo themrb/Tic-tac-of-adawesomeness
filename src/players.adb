@@ -22,6 +22,8 @@ package body Players is
             terminate;
          end select;
 
+         -- could be improved by ordering
+
          declare
             GameTreeRoot : GameTree_Type;
             value, alpha, beta : BoardValue;
@@ -30,7 +32,7 @@ package body Players is
             beta := BoardValue'Last;
             GameTreeRoot.state := state;
 
-            Max(GameTreeRoot, 6, value, chosentree, alpha, beta);
+            Max(GameTreeRoot, 7, value, chosentree, alpha, beta);
 
             Put_Line(Image(chosentree.state) & " " & value'Img &" "& Name'Img);
 
