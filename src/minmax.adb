@@ -10,7 +10,7 @@ package body MinMax is
 
    procedure Min (state : in out GameTree_Type; depth : in TurnsNo; outValue : out BoardValue; best : out GameTree_Type;
                     alpha, beta : in BoardValue) is
-      successors : Children_Access := Expand(state);
+      successors : ExpandedChildren := Expand(state);
 --        node : GameTree_Access := successors(0);
       move : GameTree_Type;
       a, b : BoardValue;
@@ -19,18 +19,17 @@ package body MinMax is
       a := alpha;
       b := beta;
       value := BoardValue'Last;  -- Set to maximum board-value;
-      best := successors.successors(1);
+      best := successors(1);
 
       -- Check if any of the successors are terminal states.
       -- Mainly to avoid exploring large portions of the game tree if the
       -- next move is already fixed.
 
       for i in 1.. (64-state.state.turns) loop
-         move := successors.successors(i);
+         move := successors(i);
          if(Terminal(move.state)) then
             outValue :=  -1;
             best := move;
-            Free(successors);
             return;
          end if;
       end loop;
@@ -39,14 +38,13 @@ package body MinMax is
       if (depth = 0) then
          outValue := 0;
          best := move;
-         Free(successors);
          return;
       end if;
 
 
       -- Didn't find any terminal states above, so we continue MinMax-ing
       for i in 1.. (64-state.state.turns) loop
-         move := successors.successors(i);
+         move := successors(i);
          declare
             chosentree : GameTree_Type;
             maxValue : BoardValue;
@@ -69,7 +67,6 @@ package body MinMax is
          if(value <= a) then -- Max sees no way of avoiding min's win
             outValue := value;
             best := move;
-            Free(successors);
             return;
          end if;
          if (value < b) then
@@ -87,12 +84,11 @@ package body MinMax is
 --                 if (depth = 5) then
 --                    Put_Line("Hit the end without returning, leaving with " & outValue'Img);
 --                 end if;
-      Free(successors);
    end Min;
 
    procedure Max (state : in out GameTree_Type; depth : in TurnsNo; outValue : out BoardValue; best : out GameTree_Type;
                     alpha, beta : in BoardValue) is
-      successors : Children_Access := Expand(state);
+      successors : ExpandedChildren := Expand(state);
       move : GameTree_Type;
       a, b : BoardValue;
       value: BoardValue;
@@ -100,17 +96,16 @@ package body MinMax is
       a := alpha;
       b := beta;
       value := BoardValue'First; -- Set to minimum board-value;
-      best := successors.successors(1);
+      best := successors(1);
 
       -- Check if any of the successors are terminal states.
       -- Mainly to avoid exploring large portions of the game tree if the
       -- next move is already fixed.
       for i in 1.. (64-state.state.turns) loop
-         move := successors.successors(i);
+         move := successors(i);
          if(Terminal(move.state)) then
             outValue := 1;
             best := move;
-            Free(successors);
             return;
          end if;
 
@@ -119,13 +114,12 @@ package body MinMax is
       if (depth = 0) then
          outValue := 0;
          best := move;
-         Free(successors);
          return;
       end if;
 
       -- Didn't find any terminal states above, so we continue MinMax-ing
       for i in 1.. (64-state.state.turns) loop
-         move := successors.successors(i);
+         move := successors(i);
          declare
             chosentree : GameTree_Type;
             minValue : BoardValue;
@@ -148,7 +142,6 @@ package body MinMax is
          if(value >= b) then -- min sees no way of avoiding max's win
             outValue := value;
             best := move;
-            Free(successors);
             return;
          end if;
          if(value > a) then
@@ -164,7 +157,6 @@ package body MinMax is
 --        end if;
       outValue := value;
 
-      Free(successors);
    end Max;
 
 --     function Forced_Move_Check (state : in GameTree_Type) return Place is

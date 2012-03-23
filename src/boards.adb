@@ -22,7 +22,11 @@ package body Boards is
       placedPiece : Cell := NextPlayer(state.justWent);
       newState : State_Type := state;
    begin
-      newState.current_state(move(x), move(y), move(z)) := placedPiece;
+      if (placedPiece = X) then
+         newState.current_stateX(move(x), move(y), move(z)) := True;
+      elsif (placedPiece = O) then
+         newState.current_stateO(move(x), move(y), move(z)) := True;
+      end if;
       newState.turns := newState.turns + 1;
       newState.justWent := placedPiece;
       newState.spot := move;
@@ -48,7 +52,7 @@ package body Boards is
          for j in Dimension'Range loop
             temp := temp & "[";
             for k in Dimension'Range loop
-               temp := temp & Cell'Image(board(i,j,k));
+               temp := temp & Boolean'Image(board(i,j,k));
                if(k /= Dimension'Last) then
                   temp := temp & ",";
                end if;
@@ -63,15 +67,22 @@ package body Boards is
 
    function Terminal(state : in State_Type) return Boolean is
       xrow, yrow, zrow, xdiag, ydiag, zdiag, corner : Boolean := True;
+      currentstate : Board_Type;
    begin
       if(state.turns < 4) then
          return False;
       end if;
 
+      if (state.justWent = X) then
+         currentstate := state.current_stateX;
+      elsif (state.justWent = O) then
+         currentstate := state.current_stateO;
+      end if;
+
       for i in Dimension'Range loop
-         xrow := xrow and state.current_state(i,state.spot(y), state.spot(z)) = state.justWent;
-         yrow := yrow and state.current_state(state.spot(x),i, state.spot(z)) = state.justWent;
-         zrow := zrow and state.current_state(state.spot(x),state.spot(y), i) = state.justWent;
+         xrow := xrow and currentstate(i,state.spot(y), state.spot(z)) = True;
+         yrow := yrow and currentstate(state.spot(x),i, state.spot(z)) = True;
+         zrow := zrow and currentstate(state.spot(x),state.spot(y), i) = True;
       end loop;
       if (xrow or yrow or zrow) then
          return True;
@@ -81,11 +92,11 @@ package body Boards is
 
       if state.spot(x) = state.spot(y) then
          for i in Dimension'Range loop
-            zdiag := zdiag and state.current_state(i,i,state.spot(z)) = state.justWent;
+            zdiag := zdiag and currentstate(i,i,state.spot(z)) = True;
          end loop;
       elsif state.spot(x) + state.spot(y) = 3 then
          for i in Dimension'Range loop
-            zdiag := zdiag and state.current_state(i,3-i,state.spot(z)) = state.justWent;
+            zdiag := zdiag and currentstate(i,3-i,state.spot(z)) = True;
          end loop;
       else
          zdiag := False;
@@ -95,11 +106,11 @@ package body Boards is
 
       if state.spot(y) = state.spot(z) then
          for i in Dimension'Range loop
-            xdiag := xdiag and state.current_state(state.spot(x),i,i) = state.justWent;
+            xdiag := xdiag and currentstate(state.spot(x),i,i) = True;
          end loop;
       elsif state.spot(z) + state.spot(y) = 3 then
          for i in Dimension'Range loop
-            xdiag := xdiag and state.current_state(state.spot(x),i,3-i) = state.justWent;
+            xdiag := xdiag and currentstate(state.spot(x),i,3-i) = True;
          end loop;
       else
          xdiag := False;
@@ -109,11 +120,11 @@ package body Boards is
 
       if state.spot(x) = state.spot(z) then
          for i in Dimension'Range loop
-            ydiag := ydiag and state.current_state(i,state.spot(y),i) = state.justWent;
+            ydiag := ydiag and currentstate(i,state.spot(y),i) = True;
          end loop;
       elsif state.spot(x) + state.spot(z) = 3 then
          for i in Dimension'Range loop
-            ydiag := ydiag and state.current_state(i,state.spot(y),3-i) = state.justWent;
+            ydiag := ydiag and currentstate(i,state.spot(y),3-i) = True;
          end loop;
       else
          ydiag := False;
@@ -125,19 +136,19 @@ package body Boards is
 
       if(state.spot(x) = state.spot(y) and state.spot(x) = state.spot(z)) then
          for i in Dimension'Range loop
-            corner := corner and state.current_state(i,i,i) = state.justWent;
+            corner := corner and currentstate(i,i,i) = True;
          end loop;
       elsif(state.spot(x) = (3-state.spot(y)) and state.spot(x) = state.spot(z)) then
          for i in Dimension'Range loop
-            corner := corner and state.current_state(i,3-i,i) = state.justWent;
+            corner := corner and currentstate(i,3-i,i) = True;
          end loop;
       elsif(state.spot(x) = state.spot(y) and state.spot(x) = (3-state.spot(z))) then
          for i in Dimension'Range loop
-            corner := corner and state.current_state(i,i,3-i) = state.justWent;
+            corner := corner and currentstate(i,i,3-i) = True;
          end loop;
       else
          for i in Dimension'Range loop
-            corner := corner and state.current_state(3-i,i,i) = state.justWent;
+            corner := corner and currentstate(3-i,i,i) = True;
          end loop;
       end if;
 

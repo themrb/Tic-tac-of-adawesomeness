@@ -5,7 +5,8 @@ package Boards is
 
    type Cell is (X, O, Empty);
 
-   type Board_Type is array(Dimension, Dimension, Dimension) of Cell;
+--     type Board_Type is array(Dimension, Dimension, Dimension) of Cell;
+   type Board_Type is array(Dimension, Dimension, Dimension) of Boolean;
    pragma Pack (Board_Type);
 
    type Coordinate is (x, y, z);
@@ -18,10 +19,11 @@ package Boards is
       justWent : Cell;
       spot : Place;
       turns : TurnsNo;
-      current_state : Board_Type;
+      current_stateX : Board_Type;
+      current_stateO : Board_Type;
    end record;
 
-   Empty_Board : constant State_Type := (Empty, (1,1,1), 0, (others => (others => (others => Empty))));
+   Empty_Board : constant State_Type := (Empty, (1,1,1), 0, (others => (others => (others => False))), (others => (others => (others => False))));
 
    function Symmetric(stateA, stateB : in State_Type) return Boolean;
 
