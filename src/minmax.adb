@@ -50,20 +50,28 @@ package body MinMax is
          move := successors.successors(i);
          declare
             chosentree : GameTree_Type;
+            maxValue : BoardValue;
          begin
-            Max(move, depth-1, outValue, chosentree, a, b);
-         end;
+            Max(move, depth-1, maxValue, chosentree, a, b);
+            if (depth = 5) then
+               Put_Line("Called max!");
+            end if;
 
-         if(outValue < value) then
-            value := outValue;
-         end if;
+            if(maxValue < value) then
+               value := maxValue;
+               if (value = -1 and depth = 5) then
+                  Put_Line("Wow! Guaranteed loss!");
+               end if;
+            end if;
+         end;
 
          if(value <= a) then -- Max sees no way of avoiding min's win
             outValue := value;
             best := move;
             Free(successors);
             return;
-         elsif(value < b) then
+         end if;
+         if (value < b) then
             b := value;
             best := move;
          end if;
@@ -115,20 +123,29 @@ package body MinMax is
          move := successors.successors(i);
          declare
             chosentree : GameTree_Type;
+            minValue : BoardValue;
          begin
-            Min(move, depth-1, outValue, chosentree, a, b);
+            Min(move, depth-1, minValue, chosentree, a, b);
+            if (depth = 6) then
+               Put_Line("Called min!");
+            end if;
+
+            if(minValue > value) then
+               value := minValue;
+               if (value = 1 and depth = 6) then
+                  Put_Line("Wow! Guaranteed win here!");
+               end if;
+            end if;
          end;
 
-         if(outValue > value) then
-            value := outValue;
-         end if;
 
          if(value >= b) then -- min sees no way of avoiding max's win
             outValue := value;
             best := move;
             Free(successors);
             return;
-         elsif(value > a) then
+         end if;
+         if(value > a) then
             a := value;
             best := move;
          end if;
