@@ -15,7 +15,7 @@ package body GameTree is
       for i in Dimension'Range loop
          for j in Dimension'Range loop
             for k in Dimension'Range loop
-               if(not state.state.current_stateX(i,j,k) and then not state.state.current_stateO(i,j,k)) then
+               if(not state.state.current_stateX(i,j,k) and not state.state.current_stateO(i,j,k)) then
                   temp := state;
                   temp.state.justWent := NextPlayer(state.state.justWent);
 
@@ -34,8 +34,8 @@ package body GameTree is
 
                   -- Check if corner or inner nodes, and if so, add to front of
                   -- queue
-                  if(((i = 0 or i = 3) and then (j = 0 or j = 3) and then (k = 0 or k = 3)) or else
-                    ((i = 1 or i = 2) and then (j = 1 or j = 2) and then (k = 1 or k = 2))) then
+                  if(((i = 0 or i = 3) and (j = 0 or j = 3) and (k = 0 or k = 3)) or
+                    ((i = 1 or i = 2) and (j = 1 or j = 2) and (k = 1 or k = 2))) then
                      Children(frontCounter) := temp;
                      if(frontCounter < Children_Range'Last) then
                         frontCounter := frontCounter + 1;
