@@ -19,20 +19,20 @@ package GameTree is
 --        bestVal : BoardValue;
    end record;
 
-   type ExpandedChildren is array(1..64) of GameTree_Type;
+   type ExpandedChildren is array(Children_Range) of GameTree_Type;
 
-   type GameTree_Children;
-   type Children_Access is access all GameTree_Children;
-   type GameTree_Children is record
-      successors : ExpandedChildren;
-   end record;
+--     type GameTree_Children;
+--     type Children_Access is access all GameTree_Children;
+--     type GameTree_Children is record
+--        successors : ExpandedChildren;
+--     end record;
 
-   procedure Free is
-    new Ada.Unchecked_Deallocation(
-        GameTree_Children, Children_Access);
-
-   package NodeList is new Ada.Containers.Doubly_Linked_Lists(GameTree_Type);
-   use NodeList;
+--     procedure Free is
+--      new Ada.Unchecked_Deallocation(
+--          GameTree_Children, Children_Access);
+--
+--     package NodeList is new Ada.Containers.Doubly_Linked_Lists(GameTree_Type);
+--     use NodeList;
 
    function Expand(state : in GameTree_Type) return ExpandedChildren;
 
