@@ -2,10 +2,6 @@ with GameTree; use GameTree;
 with Boards; use Boards;
 with Ada.Text_IO; use Ada.Text_IO;
 
-use GameTree.NodeList;
-
-
-
 package body MinMax is
 
    procedure Min (state : in out GameTree_Type; depth : in TurnsNo; outValue : out BoardValue; best : out GameTree_Type;
@@ -26,7 +22,11 @@ package body MinMax is
       -- next move is already fixed.
 
       for i in 1.. (64-state.state.turns) loop
-         move := successors(i);
+         move := successors(Children_Range(i));
+
+         if(move.state.turns /= state.state.turns + 1) then
+            Put_Line(move.state.turns'img & state.state.turns'Img);
+         end if;
          if(Terminal(move.state)) then
             outValue :=  -1;
             best := move;
@@ -34,30 +34,20 @@ package body MinMax is
          end if;
       end loop;
 
-
       if (depth = 0) then
          outValue := 0;
          best := move;
          return;
       end if;
 
-
       -- Didn't find any terminal states above, so we continue MinMax-ing
       for i in 1.. (64-state.state.turns) loop
-         move := successors(i);
+         move := successors(Children_Range(i));
          declare
             chosentree : GameTree_Type;
             maxValue : BoardValue;
          begin
             Max(move, depth-1, maxValue, chosentree, a, b);
---              if (depth = 5) then
---                 Put_Line("Called max! " & a'Img & " " & b'Img);
---              end if;
---
---              if (maxValue = 1 and depth = 5) then
---                 Put_Line("Wow! Guaranteed loss!");
---              end if;
-
             if(maxValue < value) then
                value := maxValue;
                best := move;
@@ -75,15 +65,8 @@ package body MinMax is
          end if;
       end loop;
 
---        if(best = null) then
---           outValue := value;
---           best := move;
---        end if;
       outValue := value;
 
---                 if (depth = 5) then
---                    Put_Line("Hit the end without returning, leaving with " & outValue'Img);
---                 end if;
    end Min;
 
    procedure Max (state : in out GameTree_Type; depth : in TurnsNo; outValue : out BoardValue; best : out GameTree_Type;
@@ -102,7 +85,8 @@ package body MinMax is
       -- Mainly to avoid exploring large portions of the game tree if the
       -- next move is already fixed.
       for i in 1.. (64-state.state.turns) loop
-         move := successors(i);
+         move := successors(Children_Range(i));
+
          if(Terminal(move.state)) then
             outValue := 1;
             best := move;
@@ -119,22 +103,16 @@ package body MinMax is
 
       -- Didn't find any terminal states above, so we continue MinMax-ing
       for i in 1.. (64-state.state.turns) loop
-         move := successors(i);
+         move := successors(Children_Range(i));
          declare
             chosentree : GameTree_Type;
             minValue : BoardValue;
          begin
             Min(move, depth-1, minValue, chosentree, a, b);
---              if (depth = 6) then
---                 Put_Line("Called min!");
---              end if;
 
             if(minValue > value) then
                value := minValue;
                best := move;
---                 if (value = 1 and depth = 6) then
---                    Put_Line("Wow! Guaranteed win here!");
---                 end if;
             end if;
          end;
 
@@ -151,10 +129,6 @@ package body MinMax is
 
       end loop;
 
---        if(state.best = null) then
---           outValue := value;
---           best := move;
---        end if;
       outValue := value;
 
    end Max;
