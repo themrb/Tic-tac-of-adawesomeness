@@ -1,6 +1,7 @@
 with Ada.Text_IO;
 with Boards; use Boards;
 with Players; use Players;
+with Configure; use Configure;
 
 procedure TicTacToe is
    package IO renames Ada.Text_IO;
@@ -19,6 +20,8 @@ begin
       playerO.Choose_Move(next_move);
 
       IO.Put_Line("Got move from O: " & Image(next_move));
+      IO.Put_Line("Nodes Explored: " & Configure.count'Img);
+      Configure.count := 0;
 
       game := AdvanceMove(game, next_move);
 
@@ -32,6 +35,8 @@ begin
       playerX.Choose_Move(next_move);
 
       IO.Put_Line("Got move from X: " & Image(next_move));
+      IO.Put_Line("Nodes Explored: " & Configure.count'Img);
+      Configure.count := 0;
 
       game := AdvanceMove(game, next_move);
 
@@ -40,6 +45,8 @@ begin
          exit;
       end if;
    end loop;
+
+
 
    playerX.Shutdown;
    playerO.Shutdown;
