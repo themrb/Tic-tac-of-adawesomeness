@@ -4,6 +4,7 @@ with Ada.Unchecked_Deallocation;
 
 package body GameTree is
 
+   --Expand a game tree node's state and return its successor states
    function Expand(state : in GameTree_Type) return ExpandedChildren is
       temp : aliased GameTree_Type;
       Children : ExpandedChildren;
@@ -15,6 +16,7 @@ package body GameTree is
       for i in Dimension'Range loop
          for j in Dimension'Range loop
             for k in Dimension'Range loop
+               -- if we don't already have something sitting there
                if(not state.state.current_stateX(i,j,k) and not state.state.current_stateO(i,j,k)) then
                   temp := state;
                   temp.state.justWent := NextPlayer(state.state.justWent);
@@ -46,11 +48,6 @@ package body GameTree is
                         backCounter := backCounter - 1;
                      end if;
                   end if;
-
---                    Children(frontCounter) := temp;
---                    if(frontCounter < Children_Range'Last) then
---                       frontCounter := frontCounter + 1;
---                    end if;
                end if;
             end loop;
          end loop;

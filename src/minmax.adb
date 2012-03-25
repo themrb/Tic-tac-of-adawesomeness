@@ -7,7 +7,6 @@ package body MinMax is
    procedure Min (state : in out GameTree_Type; depth : in TurnsNo; outValue : out BoardValue;
                     alpha, beta : in BoardValue) is
       successors : ExpandedChildren := Expand(state);
---        node : GameTree_Access := successors(0);
       move : GameTree_Type;
       a, b : BoardValue;
       value : BoardValue;
