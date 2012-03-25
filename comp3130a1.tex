@@ -1,0 +1,148 @@
+\documentclass[10pt]{report}
+\usepackage{times}
+\usepackage{anysize}
+\usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+\setlength{\headheight}{15.2pt}
+\setlength{\headwidth}{495pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+\pagestyle{fancy}
+\rhead{Page \thepage}
+\lhead{Warm Up Project}
+\marginsize{2cm}{1.5cm}{2cm}{2cm}
+
+\newenvironment{packed_enum}{
+\begin{enumerate}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+\begin{document}
+
+\title{COMP3130 Warm Up Project}
+\date{March 25, 2012}
+\author{Jarrah Bloomfield - U4838292, Josh Godsiff - U4685222}
+\maketitle
+
+\setlength{\columnsep}{22.0pt}
+\begin{multicols}{2}
+
+\section*{\emph{Design Problem}}
+\hrule
+\vspace{0.4cm}
+
+The problem is to design and implement an intelligent agent to play a variant of tic tac toe, played on a 3D 4x4x4 game space, using the adversarial search algorithm Minimax, extended with alpha beta pruning.
+
+In 4x4x4 tic tac toe, two players (X and O) take turns to place their token in a 3D 4x4x4 grid. A win occurs when one player creates a straight line of four tokens, in any direction.
+
+The state space is around 3 x $10^{30}$. As there are 64 points on the grid, which could be either empty, X or O, the possible states is $3^64$ less the number of states that contain more than one winning line that are not all connected through the same point, as such states cannot be reached in legal play.
+
+\section*{\emph{{The Design}}}
+\hrule
+\vspace{0.4cm}
+
+This design uses Minimax with alpha beta pruning to search the game tree to a certain depth. Smart order of node expansion and immediate terminal checking of child nodes were used in order to increase the effectiveness of the pruning algorithm.
+
+Performance was increased through a minimalist representation of the game state and use of stack memory.
+
+Ada was used to code the game API and the agent.
+
+\section*{\emph{\textmd{Game Representation}}}
+\hrule
+\vspace{0.4cm}
+
+The game state was represented using two 64 bit binary codes, with each digit representing a different point on the game grid, one for X and O each. This was achieved using a boolean array under Ada's compiler directive $pragma~Packed$. This ensured efficient use of memory and increased computational performance by minimising the main memory load/store instructions required.
+
+\section*{\emph{{Minimax with Alpha Beta Pruning}}}
+\hrule
+\vspace{0.4cm}
+
+Minimax is an adversarial search algorithm which expands the game tree in a depth first search in order to maximise game value, under the assumption that the opponent has perfect play by performing the same search.
+
+The alpha-beta pruning extension allows us to disregard branches of the game tree that a perfect opponent would not give us a chance to play, significantly reducing the size of the game tree that needs exploring.
+
+\section*{\emph{\textmd{Minimax Disadvantages}}}
+\hrule
+\vspace{0.4cm}
+
+The disadvantage of Minimax on this domain is the low granularity of the values - namely, -1 for an opponent win, 0 for no win yet and 1 for a win. This makes Minimax completely ignore expediency - it will not necessarily take the quickest route to a forced win, as it sees all winning branches as equal. More devastating it will not necessarily take the longest move to a loss (which against a non-perfect player might result in a recovery); if it sees it would lose against a perfect player, it will see all moves as equally bad and likely pick one which hastens its demise.
+
+\section*{\emph{\textmd{Move Value Maximum and Minimums Optimisation}}}
+\hrule
+\vspace{0.4cm}
+
+A small but important modification was made to the alpha-beta pruning. $\alpha$ was initialised to -1, and $\beta$ was initialised to 1. This is based on the observation that -1 is the lowest possible value, and 1 is the best possible value. The effect of this is that minimax will take a win immediately, which is valid in this domain as all wins are equal.
+
+\section*{\emph{\textmd{Sucessor Terminal Check Optimisation}}}
+\hrule
+\vspace{0.4cm}
+
+Before any other computation, Min and Max check if any of the successor states to their current state are terminal; that is, do they have a winning next move. As in this domain, the value of any win is equal, this value can be immediately returned as it is the best move possible (therefore all other successor states can be pruned). This adds a 'check bredth first' element to the Minimax algorithm but greatly improves performance as it prevents Min and Max from computing deep game trees before realising it is one move from victory.
+
+\section*{\emph{\textmd{Pruning Results}}}
+\hrule
+\vspace{0.4cm}
+
+search = searchdepth
+absolute = current absolute level
+depth = depth from start of minimax
+states = number of succesors that were pruned
+
+$pruned = states * \frac{(64 - absolute)}{(64 - (absolute - depth + search))!}$
+
+*pruning data to go here*
+
+\section*{\emph{{Other Optimisations}}}
+\hrule
+\vspace{0.4cm}
+
+\section*{\emph{\textmd{Node Expansion}}}
+\hrule
+\vspace{0.4cm}
+
+*Josh should write this bit*
+
+\section*{\emph{\textmd{Concurrent Searching}}}
+\hrule
+\vspace{0.4cm}
+
+*Josh should write this bit*
+
+\section*{\emph{\textmd{Memory Usage}}}
+\hrule
+\vspace{0.4cm}
+
+Most of the memory is assigned using the stack only, rather than the heap. This increases performance as stack memory is faster than heap memory, due to faster allocation, deallocation and better caching. This also alleviates the need to use Ada's garbage collection to deallocate memory structures.
+
+\section*{\emph{{Perfect Strategy}}}
+\hrule
+\vspace{0.4cm}
+
+This domain is also known as 'Qubic'. Perfect strategy was mathematically solved by Oren Patashnik in 1980 in \em Mathematics Magazine\em, proving that the first player will win every time under perfect strategy. In 1992 Victor Allis and Patrick Schoo constructed the first agent guaranteed to win if it played first, and caused Qubic to be removed from future Computer Games Olympiad tournaments.
+
+While theoretically this design could play optimally if given enough computation, the computational restrictions force a depth restriction, which  far from reaches perfect strategy. With improvements, and encoding extensive domain knowledge beyond the scope of the warm up project, perfect strategy would be possible to achieve.
+
+The depth cut off enforced in the implementation is 7 nodes deep (not including root node). This was mainly influenced by computation limits (see average timings for test runs). While imperfect, this is deep enough to allow the agent to both enact and counter advanced strategies.
+
+Reference: \\
+\em A Perfect Qubic-Playing Program\em, Roberto Waldteufel\\
+http://www.wylliedraughts.com/Qubic.htm
+
+\section*{\emph{{Time Taken}}}
+\hrule
+\vspace{0.4cm}
+
+Answer the time taken here
+
+\section*{\emph{\textmd{Alpha-beta speedup}}}
+\hrule
+\vspace{0.4cm}
+
+
+\end{multicols}
+\end{document}
