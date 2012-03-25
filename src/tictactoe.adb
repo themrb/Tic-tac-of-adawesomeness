@@ -7,11 +7,9 @@ procedure TicTacToe is
    game : State_Type := Empty_Board;
    next_move : Place;
 
-   playerO : Player(O);
-   playerX : Player(X);
+   playerO : Player_Access := new Player(O);
+   playerX : Player_Access := new Player(X);
 begin
-   playerO.Initialise;
-   playerX.Initialise;
 
    while game.turns <= 64 loop
 
