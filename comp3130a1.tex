@@ -40,7 +40,7 @@ The problem is to design and implement an intelligent agent to play a variant of
 
 In 4x4x4 tic tac toe, two players (X and O) take turns to place their token in a 3D 4x4x4 grid. A win occurs when one player creates a straight line of four tokens, in any direction.
 
-The state space is around 3 x $10^{30}$. As there are 64 points on the grid, which could be either empty, X or O, the possible states is $3^64$ less the number of states that contain more than one winning line that are not all connected through the same point, as such states cannot be reached in legal play.
+The state space is around 3 x $10^{30}$. As there are 64 points on the grid, which could be either empty, X or O, the possible states is $3^{64}$ less the number of states that contain more than one winning line that are not all connected through the same point, as such states cannot be reached in legal play.
 
 \section*{\emph{{The Design}}}
 \hrule
@@ -82,16 +82,18 @@ A small but important modification was made to the alpha-beta pruning. $\alpha$ 
 \hrule
 \vspace{0.4cm}
 
-Before any other computation, Min and Max check if any of the successor states to their current state are terminal; that is, do they have a winning next move. As in this domain, the value of any win is equal, this value can be immediately returned as it is the best move possible (therefore all other successor states can be pruned). This adds a 'check bredth first' element to the Minimax algorithm but greatly improves performance as it prevents Min and Max from computing deep game trees before realising it is one move from victory.
+Before any other computation, Min and Max check if any of the successor states to their current state are terminal; that is, do they have a winning move next move. As in this domain, the value of any win is equal, this value can be immediately returned as it is the best move possible (therefore all other successor states can be pruned). This adds a 'check bredth first' element to the Minimax algorithm but greatly improves performance as it prevents Min and Max from computing deep game trees before realising it is one move from victory.
 
 \section*{\emph{\textmd{Pruning Results}}}
 \hrule
 \vspace{0.4cm}
 
-search = searchdepth
-absolute = current absolute level
-depth = depth from start of minimax
-states = number of succesors that were pruned
+\begin{itemize}
+\item search = search depth
+\item absolute = current absolute level
+\item depth = depth from start of minimax
+\item states = number of succesors that were pruned
+\end{itemize}
 
 $pruned = states * \frac{(64 - absolute)}{(64 - (absolute - depth + search))!}$
 
@@ -107,19 +109,27 @@ $pruned = states * \frac{(64 - absolute)}{(64 - (absolute - depth + search))!}$
 
 A simple node expansion order was used in order to direct minimax down the most interesting path (the most likely path of a win) first, in order to maximise the number of branches pruned. It was important to keep this simple, to avoid the overhead from computing the order outweighing its benefit.
 
-The expansion order used classified move choices into two categories: one consisting of outer corner cells or inner completely surrounded cells, another of all other cells. The logic behind this is based on the domain observation that cells in the first category can be part of 7 winning lines, whereas cells in the second category can be part of 4 winning lines - meaning in general, playing on cells in the first category is more likely to result in a win. This was a very simple test for a significantly better order of expansion.
+The expansion order classified move choices into two categories: one consisting of outer corner cells or inner completely surrounded cells, another of all other cells. The logic behind this is based on the domain observation that cells in the first category can be part of 7 winning lines, whereas cells in the second category can be part of 4 winning lines - meaning in general, playing on cells in the first category is more likely to result in a win. This was a very simple test for a significantly better order of expansion.
 
 \section*{\emph{\textmd{Concurrent Searching}}}
 \hrule
 \vspace{0.4cm}
 
-*Josh should write this bit*
+The AI attempts to take advantage of any extra available cores to speed up evaluation time. It does this by expanding the current root node - to get its successor states - and then assigning each of these successor nodes to a worker process, which searches the tree below that particular node. When the worker is finished with a node, the results are aggregated with the current best known move, and then the worker is assigned a new node (if any). This continues until all the successors of the root node are exhausted, and thus a best move found.
+
+The concurrency has the effect of producing a linear speed up consistent with the number of extra cores involved. For example, a game where both players expanded to a fixed depth of 7 took approximately 18 minutes on a desktop machine, using only one of its cores. Once 7 of the machine's 8 cores were involved, the time taken for the same game was approximately 4 minutes. The difference between the actual time (4 minutes) and what we would expect given a truely linear speed up ($\frac{18}{7} \approx 2.5$ minutes) is explained by the fact that the first set of nodes evaluated during each move tends to take much more time than subsequent ones, due to the lack of accurate alpha-beta pruning data available at that time.
+
+There are other techniques that could take advantage of multiple cores - for example, maintaining a stack of unevaluated nodes. However, most of these techniques are either considerably more difficult to implement, or involve much more overhead than our chosen technique.
+
+The use of concurrency has the effect of introducing an element of non-determinism, such that the results tend to be slightly different to a purely sequential approach. Both appear to function correctly, and indeed the results for the concurrent implementation seem to be slightly better - possibly due to nodes with a higher likelyhood of a definite result having more pruning occur, and thus being evaluated more quickly.
 
 \section*{\emph{\textmd{Memory Usage}}}
 \hrule
 \vspace{0.4cm}
 
-Most of the memory is assigned using the stack only, rather than the heap. This increases performance as stack memory is faster than heap memory, due to faster allocation, deallocation and better caching. This also alleviates the need to use Ada's garbage collection to deallocate memory structures.
+Most of the memory is assigned using the stack only, rather than the heap. This increases performance as stack memory is faster than heap memory, due to faster allocation, deallocation and better caching. This also alleviates the need to use Ada's garbage collection to deallocate memory structures. 
+
+The almost exclusive use of the stack is genuinely advantageous (from a programming perspective), given that Ada's automated memory management is on a similar level to 'C' - that is to say, almost non-existent. However, it must be noted that this approach has the drawback of not caching results - a strategy that could potentially save large amounts of computation time.
 
 \section*{\emph{{Perfect Strategy}}}
 \hrule
