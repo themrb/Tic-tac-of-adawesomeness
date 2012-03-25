@@ -90,16 +90,17 @@ However, the drawback to this optimisation is that the entire set of successors 
 \hrule
 \vspace{0.4cm}
 
-\begin{itemize}
-\item search = search depth
-\item absolute = current absolute level
-\item depth = depth from start of minimax
-\item states = number of succesors that were pruned
-\end{itemize}
+We tested the difference between the number of nodes expanded by a naive MinMax algorithm, and the number expanded by MinMax with alpha-beta pruning, both exploring to a fixed depth of 3 moves:
 
-$pruned = states * \frac{(64 - absolute)}{(64 - (absolute - depth + search))!}$
+Naive: 159233648 nodes \\
+$\alpha\beta$ pruning: 22706477 nodes
 
-*pruning data to go here*
+or approximately a 7-fold difference. We attempted perform a similar test for depth 4, the results were:
+
+Naive:  1422046407 \\
+$\alpha\beta$:  110887339
+
+or approximately a 13-fold difference. No tests were performed for search depths greated than 4, due to the naieve implementation causing integer wrap-around.
 
 \section*{\emph{{Other Optimisations}}}
 \hrule
@@ -153,19 +154,33 @@ http://www.wylliedraughts.com/Qubic.htm
 
 The agent was tested by playing itself multiple times, to differing depths.
 
-The time taken to explore the game tree depths varied on different depths chosen. Five tests were taken on depths 5, 6, and 7, on a core 8 i7 processor.
+The time taken to explore the game tree depths varied on different depths chosen. Five tests were taken on depths 5, 6, and 7, on an 8 core i7 processor.
 
 Depth 5 moves took an average of 0.6 seconds each.\\
 Depth 6 moves took an average of 3.2 seconds each.\\
 Depth 7 moves took an average of 27.2 seconds each.\\
 
-Depth 8 was performed on a core 4 i5 processor, due to overheating causing extreme system instability on the i7.
+Depth 8 was performed on a 4 core i5 processor, due to overheating causing extreme system instability on the i7.
 
 Depth 8 moves took an average of 251.7 seonds each.
+
+It should be noted that Ada tends to provide very stable timings - at depth 7, there was approximately 2 seconds difference between our highest and lowest time for the entire game. Given this fact, and the level of accuracy we required, we did not feel in necessary to test each depth more than 5 times.
 
 \section*{\emph{\textmd{Alpha-beta speedup}}}
 \hrule
 \vspace{0.4cm}
+
+There is a considerable speed up due to the use of $\alpha\beta$  pruning over a naive MinMax algorithm - indeed, based on our (admittedly very few) data points, the speed up appears to be exponential:
+
+\begin{center}
+  \begin{tabular}{r | r | r}
+    Depth & Naive & $\alpha\beta$ \\
+    \hline
+    2 & 0.76s & 0.74s\\
+    3 & 28.95s & 3.55s\\
+    4 &  17:44.82s & 20.6s \\
+  \end{tabular}
+\end{center}
 
 \section*{\emph{\textmd{Acknowledgements}}}
 \hrule
