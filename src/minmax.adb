@@ -173,7 +173,7 @@ package body MinMax is
          declare
             maxValue : BoardValue;
          begin
-            Max(move, depth-1, maxValue, a, b);
+            MaxBad(move, depth-1, maxValue, a, b);
             if(maxValue < value) then
                value := maxValue;
                best := move;
@@ -222,7 +222,7 @@ package body MinMax is
          declare
             minValue : BoardValue;
          begin
-            Min(move, depth-1, minValue, a, b);
+            MinBad(move, depth-1, minValue, a, b);
 
             if(minValue > value) then
                value := minValue;
