@@ -1,7 +1,7 @@
 with Ada.Text_IO; use Ada.Text_IO;
 with Exceptions; use Exceptions;
 with Ada.Task_Attributes;
-
+with Configure;
 
 
 package body Players is
@@ -10,7 +10,7 @@ package body Players is
       state : State_Type;
       best : GameTree_Type;
       toExplore : aliased BeingExplored;
-      workers : array(Natural range 1..2) of Explorer(toExplore'Access);
+      workers : array(Natural range 1..Configure.workerTasks) of Explorer(toExplore'Access);
    begin
 
       loop
@@ -57,7 +57,7 @@ package body Players is
       current, parent : GameTree_Type;
       -- Note, this is one LESS than the tests from pre-concurrency, so
       -- a normal 7 is now a 6, because we start on Min-nodes now.
-      depth : TurnsNo := 3;
+      depth : TurnsNo := Configure.depth - 1;
       value, a, b : BoardValue;
    begin
       loop
