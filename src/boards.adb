@@ -4,11 +4,7 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 package body Boards is
 
-   function Symmetric(stateA, stateB : in State_Type) return Boolean is
-   begin
-      return False;
-   end Symmetric;
-
+   -- Passes the move onto the next player
    function NextPlayer(prev : Cell) return Cell is
    begin
       if(prev = Empty or prev = X) then
@@ -18,6 +14,7 @@ package body Boards is
       end if;
    end NextPlayer;
 
+   -- Advances a game state, given a move, returning the resulting state
    function AdvanceMove(state : State_Type; move : Place) return State_Type is
       placedPiece : Cell := NextPlayer(state.justWent);
       newState : State_Type := state;
@@ -33,18 +30,21 @@ package body Boards is
       return newState;
    end AdvanceMove;
 
+   -- Print function
    function Image(state : State_Type) return String is
    begin
       return "[" & Cell'Image(state.justWent) & "," & Image(state.spot)
         & "," & Natural'Image(state.turns) & "]";
    end;
 
+   -- Print function
    function Image(spot : Place) return String is
    begin
       return "(" & Dimension'Image(spot(x)) & "," & Dimension'Image(spot(y))
         & "," & Dimension'Image(spot(z)) & ")";
    end;
 
+   -- Print function
    function Image(board : Board_Type) return String is
       temp : Unbounded_String;
    begin
@@ -65,20 +65,24 @@ package body Boards is
       return To_String(temp);
    end;
 
+   -- Checks if a given game state is terminal (the last player to move has won)
    function Terminal(state : in State_Type) return Boolean is
       xrow, yrow, zrow, xdiag, ydiag, zdiag, corner : Boolean := True;
       currentstate : Board_Type;
    begin
+      -- There cannot be a win in less than 4 moves
       if(state.turns < 4) then
          return False;
       end if;
 
+      -- Decide which player state to check
       if (state.justWent = X) then
          currentstate := state.current_stateX;
       elsif (state.justWent = O) then
          currentstate := state.current_stateO;
       end if;
 
+      -- Check for straight line wins in each of the planes
       for i in Dimension'Range loop
          xrow := xrow and currentstate(i,state.spot(y), state.spot(z)) = True;
          yrow := yrow and currentstate(state.spot(x),i, state.spot(z)) = True;
@@ -132,7 +136,7 @@ package body Boards is
 
       if(ydiag) then return True; end if;
 
-      --crosscorner diagonals
+      --Check all crosscorner diagonals
 
       if(state.spot(x) = state.spot(y) and state.spot(x) = state.spot(z)) then
          for i in Dimension'Range loop
@@ -152,14 +156,26 @@ package body Boards is
          end loop;
       end if;
 
---        Put_Line(Boolean'Image(xrow) & "," & Boolean'Image(yrow) & "," &
---                 Boolean'Image(zrow) & "," & Boolean'Image(xdiag) & "," &
---                 Boolean'Image(ydiag) & "," & Boolean'Image(zdiag) & "," &
---                 Boolean'Image(corner));
-
       return corner;
 
    end Terminal;
+
+   -- Checks if both players have won, returning existance of an error
+   function DoubleTerminal(state : in State_Type) return Boolean is
+      firststate : State_Type := state;
+      switchedstate : State_Type := state;
+   begin
+      switchedstate.justWent := NextPlayer(switchedstate.justWent);
+      -- if both players win
+      if(Terminal(firststate) and Terminal(switchedstate)) then
+         -- Error exists
+         return true;
+      end if;
+      -- No error exists
+      return false;
+   end DoubleTerminal;
+
+
 
 
 end Boards;

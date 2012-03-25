@@ -25,7 +25,6 @@ package body Players is
             accept Shutdown do
                for i in workers'Range loop
                   abort workers(i);
-                  Put_Line("This");
                end loop;
             end Shutdown;
             exit;
