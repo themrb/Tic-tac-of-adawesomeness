@@ -42,4 +42,7 @@ begin
       end if;
    end loop;
 
+   playerX.Shutdown;
+   playerO.Shutdown;
+
 end TicTacToe;
