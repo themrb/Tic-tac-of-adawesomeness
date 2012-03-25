@@ -101,11 +101,13 @@ $pruned = states * \frac{(64 - absolute)}{(64 - (absolute - depth + search))!}$
 \hrule
 \vspace{0.4cm}
 
-\section*{\emph{\textmd{Node Expansion}}}
+\section*{\emph{\textmd{Node Expansion Order}}}
 \hrule
 \vspace{0.4cm}
 
-*Josh should write this bit*
+A simple node expansion order was used in order to direct minimax down the most interesting path (the most likely path of a win) first, in order to maximise the number of branches pruned. It was important to keep this simple, to avoid the overhead from computing the order outweighing its benefit.
+
+The expansion order used classified move choices into two categories: one consisting of outer corner cells or inner completely surrounded cells, another of all other cells. The logic behind this is based on the domain observation that cells in the first category can be part of 7 winning lines, whereas cells in the second category can be part of 4 winning lines - meaning in general, playing on cells in the first category is more likely to result in a win. This was a very simple test for a significantly better order of expansion.
 
 \section*{\emph{\textmd{Concurrent Searching}}}
 \hrule
