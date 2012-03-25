@@ -11,10 +11,10 @@ procedure TicTacToe is
    playerX : Player_Access := new Player(X);
 begin
 
+   -- Up to a maximum of 64 moves
    while game.turns <= 64 loop
 
-      --IO.Put_Line(Image(game));
-
+      -- Ask O for move
       playerO.Next_Move(game);
       playerO.Choose_Move(next_move);
 
@@ -27,8 +27,7 @@ begin
          exit;
       end if;
 
-      --IO.Put_Line(Image(game));
-
+      -- Ask X for move
       playerX.Next_Move(game);
       playerX.Choose_Move(next_move);
 

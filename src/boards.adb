@@ -175,7 +175,4 @@ package body Boards is
       return false;
    end DoubleTerminal;
 
-
-
-
 end Boards;
