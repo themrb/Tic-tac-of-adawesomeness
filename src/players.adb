@@ -10,7 +10,7 @@ package body Players is
       state : State_Type;
       best : GameTree_Type;
       toExplore : aliased BeingExplored;
-      workers : array(Natural range 1..4) of Explorer(toExplore'Access);
+      workers : array(Natural range 1..2) of Explorer(toExplore'Access);
    begin
 
       loop
@@ -22,7 +22,13 @@ package body Players is
                state := previous;
             end Next_Move;
          or
-            terminate;
+            accept Shutdown do
+               for i in workers'Range loop
+                  abort workers(i);
+                  Put_Line("This");
+               end loop;
+            end Shutdown;
+            exit;
          end select;
 
          declare
@@ -49,7 +55,9 @@ package body Players is
 
    task body Explorer is
       current, parent : GameTree_Type;
-      depth : TurnsNo := 6;
+      -- Note, this is one LESS than the tests from pre-concurrency, so
+      -- a normal 7 is now a 6, because we start on Min-nodes now.
+      depth : TurnsNo := 3;
       value, a, b : BoardValue;
    begin
       loop
@@ -72,6 +80,8 @@ package body Players is
          value := BoardValue'First; -- Set to minimum board-value;
          best := boards(Children_Range'First);
          more := True;
+         goNuts := True;
+         checkNuts := True;
          CheckForTerminals;
       end Initialise;
 
@@ -80,7 +90,8 @@ package body Players is
          node := best;
       end GetResult;
 
-      entry Next(node, parent : out GameTree_Type; a, b : out BoardValue) when more is
+      entry Next(node, parent : out GameTree_Type; a, b : out BoardValue)
+         when (more and goNuts) is
       begin
          node := boards(index);
          a := alpha;
@@ -88,9 +99,12 @@ package body Players is
          parent := root;
          if(index < Children_Range(64 - root.state.turns)) then
             index := index + 1;
-            Put_Line(index'Img);
          else
             more := False;
+         end if;
+
+         if(checkNuts) then
+            goNuts := False;
          end if;
       end Next;
 
@@ -105,12 +119,16 @@ package body Players is
             if(value >= beta) then -- min sees no way of avoiding max's win
                best := board;
                more := False;
+               Put_Line("Winnar");
             end if;
             if(value > alpha) then
                alpha := value;
                best := board;
             end if;
          end if;
+
+         goNuts := True;
+         checkNuts := False;
       end Report;
 
       procedure CheckForTerminals is

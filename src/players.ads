@@ -8,6 +8,7 @@ package Players is
    task type Player (name : Cell) is
       entry Next_Move(previous : in State_Type);
       entry Choose_Move(next : out Place);
+      entry Shutdown;
    end Player;
 
    type Player_Access is access all Player;
@@ -23,6 +24,7 @@ package Players is
       index : Children_Range := Children_Range'First;
       more : Boolean := False; -- Any more boards to check?
       alpha, beta, value : BoardValue;
+      goNuts, checkNuts : Boolean := True; --Allow everyone to compute.
 
       procedure CheckForTerminals;
    end BeingExplored;
