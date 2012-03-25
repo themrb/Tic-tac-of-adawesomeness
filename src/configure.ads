@@ -5,4 +5,6 @@ package Configure is
    depth : TurnsNo := 5;
    -- Number of worker tasks: Warning, should be set to one less than number of available cores
    workerTasks : Natural := 3;
+
+   count : Natural := 0;
 end Configure;

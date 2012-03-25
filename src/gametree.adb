@@ -1,6 +1,7 @@
 with Boards; use Boards;
 with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Unchecked_Deallocation;
+with Configure; use Configure;
 
 package body GameTree is
 
@@ -39,11 +40,13 @@ package body GameTree is
                   if(((i = 0 or i = 3) and (j = 0 or j = 3) and (k = 0 or k = 3)) or
                     ((i = 1 or i = 2) and (j = 1 or j = 2) and (k = 1 or k = 2))) then
                      Children(frontCounter) := temp;
+                     Configure.count := Configure.count + 1;
                      if(frontCounter < Children_Range'Last) then
                         frontCounter := frontCounter + 1;
                      end if;
                   else -- Otherwise, back of the line!
                      Children(backCounter) := temp;
+                     Configure.count := Configure.count + 1;
                      if(backCounter > Children_Range'First) then
                         backCounter := backCounter - 1;
                      end if;
