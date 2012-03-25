@@ -50,7 +50,7 @@ package body Players is
       when E : others => Show_Exception (E);
    end Player;
 
-   ---------------------
+   ----------------------
 
    task body Explorer is
       current, parent : GameTree_Type;
@@ -62,11 +62,12 @@ package body Players is
       loop
          toExplore.all.Next(current, parent, a, b);
          Min(current, depth, value, a, b);
-
          toExplore.all.Report(current, parent, value);
          delay 0.0;
       end loop;
    end Explorer;
+
+   ----------------------
 
    protected body BeingExplored is
       procedure Initialise (parent : in GameTree_Type) is
@@ -102,6 +103,7 @@ package body Players is
             more := False;
          end if;
 
+         -- See if we only want one worker computing at this point.
          if(checkNuts) then
             goNuts := False;
          end if;
@@ -109,6 +111,7 @@ package body Players is
 
       procedure Report(board, parent : in GameTree_Type; bValue : in BoardValue) is
       begin
+         -- This is basically a chunk of the 'Max' part of Minmax
          if(parent = root) then -- Have to make sure result is still relevant
             if(bValue > value) then
                value := bValue;
@@ -118,7 +121,6 @@ package body Players is
             if(value >= beta) then -- min sees no way of avoiding max's win
                best := board;
                more := False;
-               Put_Line("Winnar");
             end if;
             if(value > alpha) then
                alpha := value;
@@ -126,6 +128,7 @@ package body Players is
             end if;
          end if;
 
+         -- Make it so everyone can compute.
          goNuts := True;
          checkNuts := False;
       end Report;
