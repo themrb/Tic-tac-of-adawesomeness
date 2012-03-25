@@ -1,6 +1,6 @@
 with Boards; use Boards;
 
 package Configure is
-   depth : TurnsNo := 7;
-   workerTasks : Natural := 7;
+   depth : TurnsNo := 8;
+   workerTasks : Natural := 3;
 end Configure;
