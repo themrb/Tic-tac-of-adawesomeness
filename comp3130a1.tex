@@ -84,6 +84,8 @@ A small but important modification was made to the alpha-beta pruning. $\alpha$ 
 
 Before any other computation, Min and Max check if any of the successor states to their current state are terminal; that is, do they have a winning move next move. As in this domain, the value of any win is equal, this value can be immediately returned as it is the best move possible (therefore all other successor states can be pruned). This adds a 'check bredth first' element to the Minimax algorithm but greatly improves performance as it prevents Min and Max from computing deep game trees before realising it is one move from victory. This also helps reduce the horizon problem.
 
+However, the drawback to this optimisation is that the entire set of successors must be computed before we can check if they are terminal, adding a degree of extra computation to each node which might not otherwise have been done.
+
 \section*{\emph{\textmd{Pruning Results}}}
 \hrule
 \vspace{0.4cm}
